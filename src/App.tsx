@@ -6,6 +6,7 @@ import ImportWizard from './pages/ImportWizard';
 import AutomationRules from './pages/AutomationRules';
 import WelcomeCanvas from './pages/WelcomeCanvas';
 import CandidateDetail from './pages/CandidateDetail';
+import TeamsDepartments from './pages/TeamsDepartments';
 
 const App: React.FC = () => {
   const [darkMode, setDarkMode] = useState(false);
@@ -36,6 +37,7 @@ const App: React.FC = () => {
         <Route path="/repository" element={<CandidateRepository />} />
         <Route path="/import" element={<ImportWizard />} />
         <Route path="/rules" element={<AutomationRules />} />
+        <Route path="/teams" element={<TeamsDepartments />} />
         <Route path="/canvas" element={<WelcomeCanvas />} />
         <Route path="/candidate/:id" element={<CandidateDetail />} />
       </Routes>

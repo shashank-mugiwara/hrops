@@ -6,6 +6,7 @@ import { twMerge } from 'tailwind-merge';
 const navItems = [
   { name: 'Dashboard', path: '/', icon: 'dashboard' },
   { name: 'Repository', path: '/repository', icon: 'table_chart' },
+  { name: 'Teams', path: '/teams', icon: 'groups' },
   { name: 'Import Wizard', path: '/import', icon: 'upload_file' },
   { name: 'Automation Rules', path: '/rules', icon: 'account_tree' },
   { name: 'Welcome Canvas', path: '/canvas', icon: 'crop' },
