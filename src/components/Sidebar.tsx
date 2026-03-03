@@ -9,6 +9,7 @@ const navItems = [
   { name: 'Teams', path: '/teams', icon: 'groups' },
   { name: 'Import Wizard', path: '/import', icon: 'upload_file' },
   { name: 'Automation Rules', path: '/rules', icon: 'account_tree' },
+  { name: 'Templates', path: '/templates', icon: 'description' },
 ];
 
 export const Sidebar: React.FC = () => {

@@ -4,6 +4,7 @@ import Dashboard from './pages/Dashboard';
 import CandidateRepository from './pages/CandidateRepository';
 import ImportWizard from './pages/ImportWizard';
 import AutomationRules from './pages/AutomationRules';
+import Templates from './pages/Templates';
 import CandidateDetail from './pages/CandidateDetail';
 import TeamsDepartments from './pages/TeamsDepartments';
 import HelpGuide from './pages/HelpGuide';
@@ -38,6 +39,7 @@ const App: React.FC = () => {
         <Route path="/repository" element={<CandidateRepository />} />
         <Route path="/import" element={<ImportWizard />} />
         <Route path="/rules" element={<AutomationRules />} />
+        <Route path="/templates" element={<Templates />} />
         <Route path="/teams" element={<TeamsDepartments />} />
         <Route path="/candidate/:id" element={<CandidateDetail />} />
         <Route path="/help" element={<HelpGuide />} />
