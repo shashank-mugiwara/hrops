@@ -19,7 +19,7 @@ const initialRules: Rule[] = [
 ];
 
 const AutomationRules: React.FC = () => {
-  const [rules, setRules] = useState<Rule[]>(initialRules);
+  const [rules] = useState<Rule[]>(initialRules);
   const [selectedRuleId, setSelectedRuleId] = useState<string | null>('1');
 
   const selectedRule = rules.find(r => r.id === selectedRuleId);
