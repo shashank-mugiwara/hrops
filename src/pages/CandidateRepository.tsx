@@ -64,6 +64,7 @@ const CandidateRepository: React.FC = () => {
                 className="block w-full pl-10 pr-3 py-2 border border-slate-300 dark:border-slate-600 rounded leading-5 bg-white dark:bg-surface-dark placeholder-slate-400 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary sm:text-sm transition duration-150 ease-in-out"
                 placeholder="Search by name, role, or email..."
                 type="text"
+                aria-label="Search candidates"
               />
             </div>
             <button className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-slate-700 dark:text-slate-200 bg-white dark:bg-surface-dark border border-slate-300 dark:border-slate-600 rounded hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors shadow-sm">
@@ -144,10 +145,16 @@ const CandidateRepository: React.FC = () => {
                     </td>
                     <td className="px-4 py-2 whitespace-nowrap text-right text-sm font-medium">
                       <div className="flex items-center justify-end gap-2">
-                        <button className="opacity-0 group-hover/row:opacity-100 transition-opacity text-slate-400 hover:text-primary">
+                        <button
+                          className="opacity-0 group-hover/row:opacity-100 transition-opacity text-slate-400 hover:text-primary"
+                          aria-label={`Edit ${candidate.name}`}
+                        >
                           <span className="material-symbols-outlined text-lg">edit</span>
                         </button>
-                        <button className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300">
+                        <button
+                          className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
+                          aria-label={`More actions for ${candidate.name}`}
+                        >
                           <span className="material-symbols-outlined text-lg">more_horiz</span>
                         </button>
                       </div>

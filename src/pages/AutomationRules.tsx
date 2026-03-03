@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { MainLayout } from '../layouts/MainLayout';
 import { clsx } from 'clsx';
 
@@ -21,6 +21,14 @@ const initialRules: Rule[] = [
 const AutomationRules: React.FC = () => {
   const [rules] = useState<Rule[]>(initialRules);
   const [selectedRuleId, setSelectedRuleId] = useState<string | null>('1');
+  const [isDeleting, setIsDeleting] = useState(false);
+
+  useEffect(() => {
+    if (isDeleting) {
+      const timer = setTimeout(() => setIsDeleting(false), 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [isDeleting]);
 
   const selectedRule = rules.find(r => r.id === selectedRuleId);
 
@@ -40,6 +48,7 @@ const AutomationRules: React.FC = () => {
                 className="w-full pl-9 pr-3 py-2 bg-white border border-border-subtle rounded text-sm focus:outline-none focus:ring-1 focus:ring-primary dark:bg-slate-800 dark:border-slate-700"
                 placeholder="Search rules..."
                 type="text"
+                aria-label="Search rules"
               />
             </div>
             <button
@@ -85,8 +94,9 @@ const AutomationRules: React.FC = () => {
           <div className="px-8 py-5 border-b border-border-subtle dark:border-slate-800 flex items-center justify-between sticky top-0 bg-surface/95 backdrop-blur z-10 dark:bg-slate-900/95">
             <div className="flex items-center gap-4">
               <div className="flex flex-col">
-                <label className="text-[10px] uppercase font-bold text-text-secondary tracking-widest mb-1">Rule Name</label>
+                <label htmlFor="rule-name" className="text-[10px] uppercase font-bold text-text-secondary tracking-widest mb-1">Rule Name</label>
                 <input
+                  id="rule-name"
                   key={selectedRuleId || 'new'}
                   className="text-xl font-bold text-text-main dark:text-white border-none p-0 focus:ring-0 w-80 bg-transparent hover:bg-slate-50 dark:hover:bg-slate-800 rounded px-1 -ml-1 transition-colors"
                   placeholder="Enter rule name..."
@@ -102,8 +112,25 @@ const AutomationRules: React.FC = () => {
               </div>
             </div>
             <div className="flex items-center gap-3">
-              <button className="text-text-secondary hover:text-red-600 transition-colors p-2 rounded hover:bg-red-50 dark:hover:bg-red-900/20">
-                <span className="material-symbols-outlined text-[20px]">delete</span>
+              <button
+                onClick={() => {
+                  if (isDeleting) {
+                    setIsDeleting(false);
+                    // Handle actual delete logic here
+                  } else {
+                    setIsDeleting(true);
+                  }
+                }}
+                className={clsx(
+                  "transition-all p-2 rounded flex items-center gap-2",
+                  isDeleting
+                    ? "bg-red-600 text-white hover:bg-red-700"
+                    : "text-text-secondary hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20"
+                )}
+                aria-label={isDeleting ? "Confirm delete rule" : "Delete rule"}
+              >
+                <span className="material-symbols-outlined text-[20px]">{isDeleting ? 'warning' : 'delete'}</span>
+                {isDeleting && <span className="text-xs font-bold uppercase tracking-wider">Click to Confirm</span>}
               </button>
               <button className="px-4 py-2 bg-white border border-border-subtle text-text-main text-sm font-medium rounded hover:bg-gray-50 transition-colors shadow-sm dark:bg-slate-800 dark:border-slate-700 dark:text-white">Discard</button>
               <button className="px-4 py-2 bg-primary text-white text-sm font-bold rounded shadow-sm hover:bg-primary-dark transition-colors">Save Rule</button>
@@ -122,20 +149,35 @@ const AutomationRules: React.FC = () => {
                   <span className="text-text-secondary">When a candidate is added,</span>
                   <br className="mb-4 block"/>
                   Send
-                  <select key={selectedRuleId || 'new'} className="mad-lib-select mx-2" defaultValue={selectedRuleId === '1' ? 'Standard NDA Template v2' : selectedRuleId === '2' ? 'Benefits Guide 2024' : ''}>
+                  <select
+                    key={selectedRuleId || 'new'}
+                    className="mad-lib-select mx-2"
+                    defaultValue={selectedRuleId === '1' ? 'Standard NDA Template v2' : selectedRuleId === '2' ? 'Benefits Guide 2024' : ''}
+                    aria-label="Select Template"
+                  >
                     <option value="" disabled>Select Template...</option>
                     <option>Standard NDA Template v2</option>
                     <option>Benefits Guide 2024</option>
                   </select>
                   via
-                  <select key={selectedRuleId || 'new'} className="mad-lib-select mx-2" defaultValue={selectedRule?.channel || 'Email'}>
+                  <select
+                    key={selectedRuleId || 'new'}
+                    className="mad-lib-select mx-2"
+                    defaultValue={selectedRule?.channel || 'Email'}
+                    aria-label="Select Channel"
+                  >
                     <option>Email</option>
                     <option>Slack</option>
                     <option>SMS</option>
                   </select>
                   <br className="mb-4 block"/>
                   to
-                  <select key={selectedRuleId || 'new'} className="mad-lib-select w-48 mx-2" defaultValue={selectedRule?.target || ''}>
+                  <select
+                    key={selectedRuleId || 'new'}
+                    className="mad-lib-select w-48 mx-2"
+                    defaultValue={selectedRule?.target || ''}
+                    aria-label="Select Department"
+                  >
                     <option value="" disabled>Select Dept...</option>
                     <option>Engineering Dept</option>
                     <option>Sales Dept</option>
@@ -144,12 +186,30 @@ const AutomationRules: React.FC = () => {
                   </select>
                   team
                   <span className="text-text-secondary"> and CC </span>
-                  <input key={selectedRuleId || 'new'} className="mad-lib-input w-64 mx-2" type="text" placeholder="e.g. hr@company.com, ops@company.com" defaultValue={selectedRuleId === '1' ? 'hr-ops@company.inc' : ''} />
+                  <input
+                    key={selectedRuleId || 'new'}
+                    className="mad-lib-input w-64 mx-2"
+                    type="text"
+                    placeholder="e.g. hr@company.com, ops@company.com"
+                    defaultValue={selectedRuleId === '1' ? 'hr-ops@company.inc' : ''}
+                    aria-label="CC email addresses"
+                  />
                   <br className="mb-4 block"/>
                   exactly
-                  <input key={selectedRuleId || 'new'} className="mad-lib-input w-16 mx-2" type="number" defaultValue={selectedRuleId === '1' ? "10" : "0"} />
+                  <input
+                    key={selectedRuleId || 'new'}
+                    className="mad-lib-input w-16 mx-2"
+                    type="number"
+                    defaultValue={selectedRuleId === '1' ? "10" : "0"}
+                    aria-label="Number of days"
+                  />
                   days
-                  <select key={selectedRuleId || 'new'} className="mad-lib-select w-24 mx-2" defaultValue="Before">
+                  <select
+                    key={selectedRuleId || 'new'}
+                    className="mad-lib-select w-24 mx-2"
+                    defaultValue="Before"
+                    aria-label="Before or After"
+                  >
                     <option>Before</option>
                     <option>After</option>
                   </select>
