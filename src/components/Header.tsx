@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 
 interface HeaderProps {
   title: string;
@@ -6,6 +7,8 @@ interface HeaderProps {
 }
 
 export const Header: React.FC<HeaderProps> = ({ title, subtitle }) => {
+  const navigate = useNavigate();
+
   return (
     <header className="h-16 bg-surface border-b border-border-subtle px-6 flex items-center justify-between shrink-0 dark:bg-slate-900 dark:border-slate-800">
       <div>
@@ -27,7 +30,10 @@ export const Header: React.FC<HeaderProps> = ({ title, subtitle }) => {
           <span className="material-symbols-outlined text-[20px]">notifications</span>
           <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-error rounded-full border border-white"></span>
         </button>
-        <button className="flex items-center gap-2 px-3 py-1.5 rounded text-sm font-medium text-text-secondary hover:bg-slate-100 transition-colors dark:hover:bg-slate-800">
+        <button
+          onClick={() => navigate('/help')}
+          className="flex items-center gap-2 px-3 py-1.5 rounded text-sm font-medium text-text-secondary hover:bg-slate-100 transition-colors dark:hover:bg-slate-800"
+        >
           <span className="material-symbols-outlined" style={{ fontSize: '18px' }}>help</span>
           <span className="hidden sm:inline">Help Guide</span>
         </button>

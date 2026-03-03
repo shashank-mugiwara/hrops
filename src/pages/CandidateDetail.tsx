@@ -1,22 +1,24 @@
 import React from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 import { MainLayout } from '../layouts/MainLayout';
 
 const timelineItems = [
   { id: 1, type: 'error', time: 'Today, 10:42 AM', title: 'Validation Error Detected', detail: 'Automated scan of Tax Form W-4 detected invalid SSN pattern (###-##-#### required).', user: 'System', errorCode: 'VAL_SSN_PATTERN_MISMATCH' },
-  { id: 2, type: 'view', time: 'Yesterday, 4:00 PM', title: 'Document Viewed', detail: 'Sarah Jenkins viewed Employee Handbook v2.4.pdf for 12 minutes.', user: 'Candidate' },
   { id: 4, type: 'automation', time: 'Yesterday, 9:00 AM', title: 'Automation Rule Triggered', detail: 'Rule Eng_Onboarding_T-14 executed successfully.', user: 'System', attachments: ['NDA_v4.pdf', 'Benefits_Guide.pdf', 'W4_2023.pdf'] },
   { id: 5, type: 'create', time: 'Oct 10, 2:00 PM', title: 'Profile Created', detail: 'Imported from candidates_q3.csv by Admin User.', user: 'Admin' },
 ];
 
 const CandidateDetail: React.FC = () => {
+  const navigate = useNavigate();
+
   return (
     <MainLayout title="Sarah Jenkins" subtitle="Senior Backend Engineer • Engineering">
       <main className="p-8 max-w-[1600px] w-full mx-auto">
         {/* Breadcrumbs */}
         <nav className="flex items-center text-sm text-text-secondary mb-6">
-          <a className="hover:text-primary transition-colors" href="#">Candidates</a>
+          <Link to="/repository" className="hover:text-primary transition-colors">Candidates</Link>
           <span className="material-symbols-outlined text-[16px] mx-2">chevron_right</span>
-          <a className="hover:text-primary transition-colors" href="#">Engineering</a>
+          <Link to="/teams" className="hover:text-primary transition-colors">Engineering</Link>
           <span className="material-symbols-outlined text-[16px] mx-2">chevron_right</span>
           <span className="text-text-main dark:text-white font-medium">Sarah Jenkins</span>
         </nav>
@@ -194,7 +196,10 @@ const CandidateDetail: React.FC = () => {
                 ))}
               </div>
               <div className="p-4 border-t border-border-subtle dark:border-slate-800 mt-auto bg-gray-50/30 dark:bg-slate-800/30 rounded-b-lg">
-                <button className="text-[10px] font-bold text-primary hover:underline flex items-center justify-center w-full gap-1 uppercase tracking-wider">
+                <button
+                  onClick={() => navigate('/reports')}
+                  className="text-[10px] font-bold text-primary hover:underline flex items-center justify-center w-full gap-1 uppercase tracking-wider"
+                >
                   View Full History Log <span className="material-symbols-outlined text-[14px]">open_in_new</span>
                 </button>
               </div>

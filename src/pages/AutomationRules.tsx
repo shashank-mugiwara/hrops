@@ -11,7 +11,7 @@ interface Rule {
   status: 'Active' | 'Draft';
 }
 
-const rules: Rule[] = [
+const initialRules: Rule[] = [
   { id: '1', name: 'Engineering NDA - T-10', target: 'Engineering Dept', channel: 'Email', attachments: 2, status: 'Active' },
   { id: '2', name: 'Sales Onboarding Kit', target: 'Sales Dept', channel: 'Slack', attachments: 1, status: 'Active' },
   { id: '3', name: 'Intern Welcome Email', target: 'All Interns', channel: 'Email', attachments: 0, status: 'Draft' },
@@ -19,7 +19,14 @@ const rules: Rule[] = [
 ];
 
 const AutomationRules: React.FC = () => {
-  const [selectedRuleId, setSelectedRuleId] = useState('1');
+  const [rules, setRules] = useState<Rule[]>(initialRules);
+  const [selectedRuleId, setSelectedRuleId] = useState<string | null>('1');
+
+  const selectedRule = rules.find(r => r.id === selectedRuleId);
+
+  const handleNewRule = () => {
+    setSelectedRuleId(null);
+  };
 
   return (
     <MainLayout title="Automation Rules Engine" subtitle="Configure logic-based document dispatch triggers.">
@@ -35,7 +42,10 @@ const AutomationRules: React.FC = () => {
                 type="text"
               />
             </div>
-            <button className="flex items-center justify-center gap-2 w-full py-2 bg-primary text-white text-sm font-medium rounded shadow-sm hover:bg-primary-dark transition-colors">
+            <button
+              onClick={handleNewRule}
+              className="flex items-center justify-center gap-2 w-full py-2 bg-primary text-white text-sm font-medium rounded shadow-sm hover:bg-primary-dark transition-colors"
+            >
               <span className="material-symbols-outlined text-[18px]">add</span>
               New Rule
             </button>
@@ -77,14 +87,18 @@ const AutomationRules: React.FC = () => {
               <div className="flex flex-col">
                 <label className="text-[10px] uppercase font-bold text-text-secondary tracking-widest mb-1">Rule Name</label>
                 <input
+                  key={selectedRuleId || 'new'}
                   className="text-xl font-bold text-text-main dark:text-white border-none p-0 focus:ring-0 w-80 bg-transparent hover:bg-slate-50 dark:hover:bg-slate-800 rounded px-1 -ml-1 transition-colors"
-                  defaultValue="Engineering NDA - T-10"
+                  placeholder="Enter rule name..."
+                  defaultValue={selectedRule?.name || ''}
                 />
               </div>
               <div className="h-8 w-px bg-border-subtle dark:bg-slate-700 mx-2"></div>
               <div className="flex items-center gap-2">
                 <span className="text-sm text-text-secondary">Status:</span>
-                <span className="text-sm font-bold text-success">Active</span>
+                <span className={clsx("text-sm font-bold", selectedRule?.status === 'Active' ? "text-success" : "text-slate-400")}>
+                  {selectedRule?.status || 'Draft'}
+                </span>
               </div>
             </div>
             <div className="flex items-center gap-3">
@@ -108,39 +122,46 @@ const AutomationRules: React.FC = () => {
                   <span className="text-text-secondary">When a candidate is added,</span>
                   <br className="mb-4 block"/>
                   Send
-                  <select className="mad-lib-select mx-2">
+                  <select key={selectedRuleId || 'new'} className="mad-lib-select mx-2" defaultValue={selectedRuleId === '1' ? 'Standard NDA Template v2' : selectedRuleId === '2' ? 'Benefits Guide 2024' : ''}>
+                    <option value="" disabled>Select Template...</option>
                     <option>Standard NDA Template v2</option>
                     <option>Benefits Guide 2024</option>
                   </select>
                   via
-                  <select className="mad-lib-select mx-2">
+                  <select key={selectedRuleId || 'new'} className="mad-lib-select mx-2" defaultValue={selectedRule?.channel || 'Email'}>
                     <option>Email</option>
                     <option>Slack</option>
+                    <option>SMS</option>
                   </select>
                   <br className="mb-4 block"/>
                   to
-                  <select className="mad-lib-select w-48 mx-2">
+                  <select key={selectedRuleId || 'new'} className="mad-lib-select w-48 mx-2" defaultValue={selectedRule?.target || ''}>
+                    <option value="" disabled>Select Dept...</option>
                     <option>Engineering Dept</option>
                     <option>Sales Dept</option>
+                    <option>All Interns</option>
+                    <option>Design Dept</option>
                   </select>
                   team
                   <span className="text-text-secondary"> and CC </span>
-                  <input className="mad-lib-input w-64 mx-2" type="text" placeholder="e.g. hr@company.com, ops@company.com" defaultValue="hr-ops@company.inc" />
+                  <input key={selectedRuleId || 'new'} className="mad-lib-input w-64 mx-2" type="text" placeholder="e.g. hr@company.com, ops@company.com" defaultValue={selectedRuleId === '1' ? 'hr-ops@company.inc' : ''} />
                   <br className="mb-4 block"/>
                   exactly
-                  <input className="mad-lib-input w-16 mx-2" type="number" defaultValue="10" />
+                  <input key={selectedRuleId || 'new'} className="mad-lib-input w-16 mx-2" type="number" defaultValue={selectedRuleId === '1' ? "10" : "0"} />
                   days
-                  <select className="mad-lib-select w-24 mx-2">
+                  <select key={selectedRuleId || 'new'} className="mad-lib-select w-24 mx-2" defaultValue="Before">
                     <option>Before</option>
                     <option>After</option>
                   </select>
                   their Joining Date.
                 </div>
               </div>
-              <p className="mt-4 text-xs text-text-secondary flex items-center gap-2">
-                <span className="material-symbols-outlined text-success text-[16px]">check_circle</span>
-                Logic is valid. This rule will currently affect <strong className="text-text-main dark:text-white">14 upcoming candidates</strong>.
-              </p>
+              {selectedRuleId && (
+                <p className="mt-4 text-xs text-text-secondary flex items-center gap-2">
+                  <span className="material-symbols-outlined text-success text-[16px]">check_circle</span>
+                  Logic is valid. This rule will currently affect <strong className="text-text-main dark:text-white">14 upcoming candidates</strong>.
+                </p>
+              )}
             </section>
 
             {/* Attachments */}
@@ -153,18 +174,20 @@ const AutomationRules: React.FC = () => {
                 <span className="text-[10px] text-text-secondary uppercase tracking-widest">Max 10MB per file</span>
               </div>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                <div className="flex items-center gap-3 bg-white p-3 rounded shadow-card border border-border-subtle dark:bg-slate-900 dark:border-slate-800">
-                  <div className="bg-red-50 p-2 rounded text-red-600 dark:bg-red-900/20">
-                    <span className="material-symbols-outlined text-[24px]">picture_as_pdf</span>
+                {selectedRuleId === '1' && (
+                  <div className="flex items-center gap-3 bg-white p-3 rounded shadow-card border border-border-subtle dark:bg-slate-900 dark:border-slate-800">
+                    <div className="bg-red-50 p-2 rounded text-red-600 dark:bg-red-900/20">
+                      <span className="material-symbols-outlined text-[24px]">picture_as_pdf</span>
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-medium truncate">NDA_Engineering_v4.pdf</p>
+                      <p className="text-[10px] text-text-secondary font-mono uppercase tracking-tighter">1.2 MB</p>
+                    </div>
+                    <button className="text-text-secondary hover:text-red-500 transition-colors">
+                      <span className="material-symbols-outlined text-[20px]">close</span>
+                    </button>
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium truncate">NDA_Engineering_v4.pdf</p>
-                    <p className="text-[10px] text-text-secondary font-mono uppercase tracking-tighter">1.2 MB</p>
-                  </div>
-                  <button className="text-text-secondary hover:text-red-500 transition-colors">
-                    <span className="material-symbols-outlined text-[20px]">close</span>
-                  </button>
-                </div>
+                )}
                 <div className="flex items-center justify-center gap-2 border-2 border-dashed border-border-subtle dark:border-slate-800 bg-transparent p-3 rounded text-text-secondary hover:text-primary hover:border-primary hover:bg-white dark:hover:bg-slate-800 transition-all cursor-pointer">
                   <span className="material-symbols-outlined text-[20px]">add</span>
                   <span className="text-sm font-bold uppercase tracking-widest text-[10px]">Add File</span>
