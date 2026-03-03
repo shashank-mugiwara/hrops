@@ -6,7 +6,7 @@ interface Rule {
   id: string;
   name: string;
   target: string;
-  channel: 'Email' | 'Slack' | 'SMS';
+  channel: 'Email' | 'Slack';
   attachments: number;
   status: 'Active' | 'Draft';
 }
@@ -168,7 +168,6 @@ const AutomationRules: React.FC = () => {
                   >
                     <option>Email</option>
                     <option>Slack</option>
-                    <option>SMS</option>
                   </select>
                   <br className="mb-4 block"/>
                   to
