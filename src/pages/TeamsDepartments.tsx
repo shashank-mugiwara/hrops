@@ -53,7 +53,7 @@ const TeamsDepartments: React.FC = () => {
               <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-xl">search</span>
               <input
                 className="w-full pl-10 pr-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg focus:ring-1 focus:ring-primary focus:border-primary text-sm transition-all outline-none dark:text-white"
-                placeholder="Search teams, leads, or rules..."
+                placeholder="Search teams or rules..."
                 type="text"
               />
             </div>

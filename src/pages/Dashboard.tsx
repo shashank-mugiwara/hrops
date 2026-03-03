@@ -3,13 +3,11 @@ import { MainLayout } from '../layouts/MainLayout';
 
 const kpiData = [
   { title: 'Pending Joinees', value: '14', change: '2%', icon: 'person_add', color: 'primary' },
-  { title: 'Emails Failed', value: '3', change: '+1', icon: 'mark_email_unread', color: 'error' },
   { title: 'Welcome Kits Due', value: '8', change: '0%', icon: 'inventory_2', color: 'warning' },
   { title: 'Active Rules', value: '24', change: 'Active', icon: 'bolt', color: 'primary' },
 ];
 
 const activityFeed = [
-  { id: 1, title: 'Email Bounce', detail: '"Benefits Guide" to m.scott@example.com failed.', time: '12 mins ago', icon: 'warning', iconColor: 'text-error' },
   { id: 2, title: 'System', detail: 'Resolved 3 duplicate records in Batch #209 automatically.', time: '45 mins ago', icon: 'merge_type', iconColor: 'text-primary' },
   { id: 3, title: 'Sarah Jenkins', detail: '(Engineering) signed Offer Letter.', time: '1 hour ago', icon: 'task_alt', iconColor: 'text-success' },
   { id: 4, title: 'Import', detail: '"Q3_Hires_Final.csv" uploaded by Alex Morgan.', time: '2 hours ago', icon: 'upload_file', iconColor: 'text-slate-400' },
@@ -30,7 +28,7 @@ const Dashboard: React.FC = () => {
         </div>
 
         {/* KPI Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
           {kpiData.map((kpi) => (
             <div key={kpi.title} className="bg-surface border border-border-subtle rounded p-5 shadow-card hover:shadow-md transition-shadow dark:bg-slate-900 dark:border-slate-800 group">
               <div className="flex justify-between items-start mb-2">

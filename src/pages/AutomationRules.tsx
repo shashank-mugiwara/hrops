@@ -124,6 +124,8 @@ const AutomationRules: React.FC = () => {
                     <option>Sales Dept</option>
                   </select>
                   team
+                  <span className="text-text-secondary"> and CC </span>
+                  <input className="mad-lib-input w-64 mx-2" type="text" placeholder="e.g. hr@company.com, ops@company.com" defaultValue="hr-ops@company.inc" />
                   <br className="mb-4 block"/>
                   exactly
                   <input className="mad-lib-input w-16 mx-2" type="number" defaultValue="10" />

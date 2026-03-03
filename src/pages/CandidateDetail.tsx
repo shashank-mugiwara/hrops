@@ -4,7 +4,6 @@ import { MainLayout } from '../layouts/MainLayout';
 const timelineItems = [
   { id: 1, type: 'error', time: 'Today, 10:42 AM', title: 'Validation Error Detected', detail: 'Automated scan of Tax Form W-4 detected invalid SSN pattern (###-##-#### required).', user: 'System', errorCode: 'VAL_SSN_PATTERN_MISMATCH' },
   { id: 2, type: 'view', time: 'Yesterday, 4:00 PM', title: 'Document Viewed', detail: 'Sarah Jenkins viewed Employee Handbook v2.4.pdf for 12 minutes.', user: 'Candidate' },
-  { id: 3, type: 'email', time: 'Yesterday, 9:15 AM', title: 'Onboarding Packet Opened', detail: 'Email subject: "Action Required: Your Onboarding Documents"', user: 'Candidate' },
   { id: 4, type: 'automation', time: 'Yesterday, 9:00 AM', title: 'Automation Rule Triggered', detail: 'Rule Eng_Onboarding_T-14 executed successfully.', user: 'System', attachments: ['NDA_v4.pdf', 'Benefits_Guide.pdf', 'W4_2023.pdf'] },
   { id: 5, type: 'create', time: 'Oct 10, 2:00 PM', title: 'Profile Created', detail: 'Imported from candidates_q3.csv by Admin User.', user: 'Admin' },
 ];
@@ -159,14 +158,12 @@ const CandidateDetail: React.FC = () => {
                     <div className={`absolute left-0 top-0 size-8 rounded-full border-2 border-surface dark:border-slate-900 flex items-center justify-center z-10 ${
                       item.type === 'error' ? 'bg-red-100 text-error dark:bg-red-900/30' :
                       item.type === 'automation' ? 'bg-purple-50 text-purple-600 dark:bg-purple-900/20' :
-                      item.type === 'email' ? 'bg-blue-50 text-primary dark:bg-blue-900/20' :
                       item.type === 'create' ? 'bg-green-50 text-success dark:bg-green-900/20' :
                       'bg-gray-100 text-text-secondary dark:bg-slate-800'
                     }`}>
                       <span className="material-symbols-outlined text-[16px]">
                         {item.type === 'error' ? 'warning' :
                          item.type === 'automation' ? 'smart_toy' :
-                         item.type === 'email' ? 'mark_email_read' :
                          item.type === 'create' ? 'person_add' :
                          'visibility'}
                       </span>

@@ -45,23 +45,6 @@ const CreateTeamModal: React.FC<CreateTeamModalProps> = ({ isOpen, onClose }) =>
               />
             </div>
 
-            {/* Department Head */}
-            <div className="space-y-2">
-              <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300">Department Head</label>
-              <div className="relative">
-                <select
-                  defaultValue=""
-                  className="w-full h-12 px-4 appearance-none rounded border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all cursor-pointer dark:text-white"
-                >
-                  <option disabled value="">Select a leader</option>
-                  <option>Sarah Jenkins - Product Lead</option>
-                  <option>Michael Chen - VP Engineering</option>
-                  <option>Alisha Rodriguez - HR Director</option>
-                </select>
-                <span className="material-symbols-outlined absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">expand_more</span>
-              </div>
-            </div>
-
             {/* Description */}
             <div className="space-y-2">
               <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300">Description</label>
