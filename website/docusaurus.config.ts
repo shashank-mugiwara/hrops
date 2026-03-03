@@ -14,7 +14,18 @@ const config: Config = {
   projectName: 'hrops',
 
   onBrokenLinks: 'throw',
-  onBrokenMarkdownLinks: 'warn',
+  markdown: {
+    format: 'mdx',
+    mermaid: true,
+    preprocessor: ({filePath, fileContent}) => {
+      return fileContent;
+    },
+    mdx1Compat: {
+      comments: true,
+      admonitions: true,
+      headingIds: true,
+    },
+  },
 
   i18n: {
     defaultLocale: 'en',
@@ -26,6 +37,7 @@ const config: Config = {
       'classic',
       {
         docs: {
+          path: '../docs',
           sidebarPath: './sidebars.ts',
           editUrl:
             'https://github.com/shashank-mugiwara/hrops/tree/main/docs/',
