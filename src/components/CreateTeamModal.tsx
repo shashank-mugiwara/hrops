@@ -27,6 +27,7 @@ const CreateTeamModal: React.FC<CreateTeamModalProps> = ({ isOpen, onClose }) =>
           <button
             onClick={onClose}
             className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors"
+            aria-label="Close modal"
           >
             <span className="material-symbols-outlined">close</span>
           </button>
@@ -37,8 +38,9 @@ const CreateTeamModal: React.FC<CreateTeamModalProps> = ({ isOpen, onClose }) =>
           <form className="space-y-6">
             {/* Team Name */}
             <div className="space-y-2">
-              <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300">Team Name</label>
+              <label htmlFor="team-name" className="block text-sm font-semibold text-slate-700 dark:text-slate-300">Team Name</label>
               <input
+                id="team-name"
                 className="w-full h-12 px-4 rounded border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all placeholder:text-slate-400 dark:text-white"
                 placeholder="e.g., Engineering"
                 type="text"
@@ -47,8 +49,9 @@ const CreateTeamModal: React.FC<CreateTeamModalProps> = ({ isOpen, onClose }) =>
 
             {/* Description */}
             <div className="space-y-2">
-              <label className="block text-sm font-semibold text-slate-700 dark:text-slate-300">Description</label>
+              <label htmlFor="team-description" className="block text-sm font-semibold text-slate-700 dark:text-slate-300">Description</label>
               <textarea
+                id="team-description"
                 className="w-full p-4 rounded border border-slate-200 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 focus:border-primary focus:ring-1 focus:ring-primary outline-none transition-all placeholder:text-slate-400 resize-none dark:text-white"
                 placeholder="Briefly describe the team's purpose and objectives"
                 rows={3}
@@ -74,6 +77,7 @@ const CreateTeamModal: React.FC<CreateTeamModalProps> = ({ isOpen, onClose }) =>
                       defaultChecked={rule.checked}
                       className="mt-1 rounded text-primary focus:ring-primary border-slate-300"
                       type="checkbox"
+                      aria-label={rule.title}
                     />
                     <div className="ml-3">
                       <span className="block text-sm font-medium text-slate-800 dark:text-slate-200">{rule.title}</span>

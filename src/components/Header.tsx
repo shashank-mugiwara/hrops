@@ -24,9 +24,13 @@ export const Header: React.FC<HeaderProps> = ({ title, subtitle }) => {
             className="block w-64 pl-10 pr-3 py-1.5 border border-gray-300 rounded text-sm bg-gray-50 placeholder-gray-500 focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all dark:bg-slate-800 dark:border-slate-700 dark:text-white"
             placeholder="Search..."
             type="text"
+            aria-label="Search"
           />
         </div>
-        <button className="relative p-2 text-text-secondary hover:text-text-main hover:bg-gray-100 rounded transition-colors dark:hover:bg-slate-800">
+        <button
+          className="relative p-2 text-text-secondary hover:text-text-main hover:bg-gray-100 rounded transition-colors dark:hover:bg-slate-800"
+          aria-label="View notifications"
+        >
           <span className="material-symbols-outlined text-[20px]">notifications</span>
           <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-error rounded-full border border-white"></span>
         </button>
