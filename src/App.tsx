@@ -6,6 +6,8 @@ import ImportWizard from './pages/ImportWizard';
 import AutomationRules from './pages/AutomationRules';
 import CandidateDetail from './pages/CandidateDetail';
 import TeamsDepartments from './pages/TeamsDepartments';
+import HelpGuide from './pages/HelpGuide';
+import Reports from './pages/Reports';
 
 const App: React.FC = () => {
   const [darkMode, setDarkMode] = useState(false);
@@ -38,6 +40,8 @@ const App: React.FC = () => {
         <Route path="/rules" element={<AutomationRules />} />
         <Route path="/teams" element={<TeamsDepartments />} />
         <Route path="/candidate/:id" element={<CandidateDetail />} />
+        <Route path="/help" element={<HelpGuide />} />
+        <Route path="/reports" element={<Reports />} />
       </Routes>
     </BrowserRouter>
   );

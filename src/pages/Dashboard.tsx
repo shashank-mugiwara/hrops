@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { MainLayout } from '../layouts/MainLayout';
 
 const kpiData = [
@@ -14,6 +15,8 @@ const activityFeed = [
 ];
 
 const Dashboard: React.FC = () => {
+  const navigate = useNavigate();
+
   return (
     <MainLayout title="Dashboard Overview" subtitle="Here's what's happening with your onboardings today.">
       <div className="p-8 max-w-[1400px] mx-auto flex flex-col gap-6">
@@ -59,7 +62,10 @@ const Dashboard: React.FC = () => {
                 <h3 className="text-base font-semibold text-text-main dark:text-white">Intake Volume</h3>
                 <p className="text-xs text-text-secondary mt-1">Projected joiners over the next 4 weeks</p>
               </div>
-              <button className="text-xs font-medium text-primary hover:text-primary-hover flex items-center gap-1">
+              <button
+                onClick={() => navigate('/reports')}
+                className="text-xs font-medium text-primary hover:text-primary-hover flex items-center gap-1"
+              >
                 View Full Report
                 <span className="material-symbols-outlined text-[14px]">arrow_forward</span>
               </button>
@@ -117,7 +123,12 @@ const Dashboard: React.FC = () => {
               </ul>
             </div>
             <div className="p-3 border-t border-border-subtle text-center bg-gray-50 rounded-b dark:bg-slate-800 dark:border-slate-700">
-              <button className="text-xs font-medium text-text-secondary hover:text-primary transition-colors">View All Activity</button>
+              <button
+                onClick={() => navigate('/reports')}
+                className="text-xs font-medium text-text-secondary hover:text-primary transition-colors"
+              >
+                View All Activity
+              </button>
             </div>
           </div>
         </div>
