@@ -8,7 +8,7 @@ const HelpGuide: React.FC = () => {
     {
       title: 'Getting Started: The HR Ops Flow',
       icon: 'map',
-      content: 'Welcome to Trust HR. Our platform is designed to automate the repetitive tasks of onboarding. The core flow follows these four steps:',
+      content: 'Welcome to HR Ops. Our platform is designed to automate the repetitive tasks of onboarding. The core flow follows these four steps:',
       steps: [
         { title: '1. Import Candidates', desc: 'Use the Import Wizard to upload candidate data from CSV/XLSX. You can map custom fields and resolve duplicates during this stage.', icon: 'upload_file' },
         { title: '2. Configure Rules', desc: 'Set up Automation Rules to trigger document dispatch (NDAs, Handbooks) via Email or Slack based on joining dates.', icon: 'psychology' },
@@ -38,7 +38,7 @@ const HelpGuide: React.FC = () => {
   ];
 
   return (
-    <MainLayout title="Help Guide" subtitle="Learn how to navigate and master the Trust HR platform.">
+    <MainLayout title="Help Guide" subtitle="Learn how to navigate and master the HR Ops platform.">
       <div className="max-w-4xl mx-auto p-8">
         <div className="space-y-12">
           {sections.map((section, idx) => (

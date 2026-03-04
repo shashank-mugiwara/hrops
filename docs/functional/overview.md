@@ -1,10 +1,10 @@
 # Functional Overview
 
-Welcome to the Trust HR Portal functional documentation. This guide is designed for HR Operations Managers and team leads responsible for managing high-volume employee onboarding.
+Welcome to the HR Ops Portal functional documentation. This guide is designed for HR Operations Managers and team leads responsible for managing high-volume employee onboarding.
 
 ## Getting Started
 
-To access the portal, navigate to the [Trust HR Dashboard](https://shashank-mugiwara.github.io/hrops/).
+To access the portal, navigate to the [HR Ops Dashboard](https://shashank-mugiwara.github.io/hrops/).
 
 ### Core Navigation
 - **Dashboard:** Your operational mission control.

@@ -22,7 +22,7 @@ export const Sidebar: React.FC = () => {
               <span className="material-symbols-outlined text-primary" style={{ fontSize: '24px' }}>verified_user</span>
             </div>
             <div className="flex flex-col">
-              <h1 className="text-text-main text-sm font-semibold tracking-tight dark:text-white">Trust HR</h1>
+              <h1 className="text-text-main text-sm font-semibold tracking-tight dark:text-white">HR Ops</h1>
               <p className="text-text-secondary text-xs font-normal">Enterprise Portal</p>
             </div>
           </div>

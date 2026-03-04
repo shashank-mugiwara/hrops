@@ -1,4 +1,4 @@
-# Enterprise Trust HR Portal - PRD
+# Enterprise HR Ops Portal - PRD
 
 **The Pitch:** A unified command center for high-volume employee onboarding, replacing fragmented spreadsheets with rigorous automation and data integrity.
 

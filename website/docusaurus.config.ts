@@ -3,7 +3,7 @@ import type {Config} from '@docusaurus/types';
 import type * as Preset from '@docusaurus/preset-classic';
 
 const config: Config = {
-  title: 'Trust HR Portal',
+  title: 'HR Ops Portal',
   tagline: 'Enterprise HR Operations Management',
   favicon: 'img/favicon.ico',
 
@@ -52,9 +52,9 @@ const config: Config = {
 
   themeConfig: {
     navbar: {
-      title: 'Trust HR',
+      title: 'HR Ops',
       logo: {
-        alt: 'Trust HR Logo',
+        alt: 'HR Ops Logo',
         src: 'img/logo.svg',
       },
       items: [
@@ -101,7 +101,7 @@ const config: Config = {
           ],
         },
       ],
-      copyright: `Copyright © ${new Date().getFullYear()} Trust HR Portal. Built with Docusaurus.`,
+      copyright: `Copyright © ${new Date().getFullYear()} HR Ops Portal. Built with Docusaurus.`,
     },
     prism: {
       theme: prismThemes.github,

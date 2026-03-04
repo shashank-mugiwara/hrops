@@ -33,7 +33,7 @@ export default function Home(): ReactNode {
   return (
     <Layout
       title={`${siteConfig.title}`}
-      description="Enterprise Trust HR Portal Documentation">
+      description="Enterprise HR Ops Portal Documentation">
       <HomepageHeader />
       <main>
         {/* Placeholder for future features or content */}

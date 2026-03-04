@@ -29,4 +29,4 @@ app.include_router(settings_api.router)
 
 @app.get("/")
 def read_root():
-    return {"message": "Trust HR Portal Backend API"}
+    return {"message": "HR Ops Portal Backend API"}

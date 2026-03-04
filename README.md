@@ -1,4 +1,4 @@
-# Trust HR Portal
+# HR Ops Portal
 
 A unified command center for high-volume employee onboarding, replacing fragmented spreadsheets with rigorous automation and data integrity.
 

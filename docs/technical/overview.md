@@ -1,6 +1,6 @@
 # Technical Overview
 
-The Trust HR Portal is a modern web application built with React, TypeScript, and Vite. It follows a modular architecture designed for high-volume HR operations, emphasizing data density and performance.
+The HR Ops Portal is a modern web application built with React, TypeScript, and Vite. It follows a modular architecture designed for high-volume HR operations, emphasizing data density and performance.
 
 ## Tech Stack
 
