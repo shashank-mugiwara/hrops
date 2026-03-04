@@ -1,21 +1,46 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MainLayout } from '../layouts/MainLayout';
+import { api, type DashboardStats } from '../api';
 
-const kpiData = [
-  { title: 'Pending Joinees', value: '14', change: '2%', icon: 'person_add', color: 'primary' },
-  { title: 'Welcome Kits Due', value: '8', change: '0%', icon: 'inventory_2', color: 'warning' },
-  { title: 'Active Rules', value: '24', change: 'Active', icon: 'bolt', color: 'primary' },
-];
+type DateFilter = '7d' | '30d' | 'quarter';
 
-const activityFeed = [
-  { id: 2, title: 'System', detail: 'Resolved 3 duplicate records in Batch #209 automatically.', time: '45 mins ago', icon: 'merge_type', iconColor: 'text-primary' },
-  { id: 3, title: 'Sarah Jenkins', detail: '(Engineering) signed Offer Letter.', time: '1 hour ago', icon: 'task_alt', iconColor: 'text-success' },
-  { id: 4, title: 'Import', detail: '"Q3_Hires_Final.csv" uploaded by Alex Morgan.', time: '2 hours ago', icon: 'upload_file', iconColor: 'text-slate-400' },
-];
+const DATE_FILTER_LABELS: Record<DateFilter, string> = {
+  '7d': '7 Days',
+  '30d': '30 Days',
+  'quarter': 'Quarter',
+};
 
 const Dashboard: React.FC = () => {
   const navigate = useNavigate();
+  const [stats, setStats] = useState<DashboardStats | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [dateFilter, setDateFilter] = useState<DateFilter>('7d');
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      try {
+        setLoading(true);
+        const data = await api.dashboard.stats(dateFilter);
+        setStats(data);
+      } catch (err: any) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchStats();
+  }, [dateFilter]);
+
+  if (loading && !stats) return <MainLayout title="Dashboard Overview"><div className="p-8">Loading dashboard...</div></MainLayout>;
+  if (error && !stats) return <MainLayout title="Dashboard Overview"><div className="p-8 text-rose-500">Error: {error}</div></MainLayout>;
+
+  const kpiData = [
+    { title: 'Pending Joinees', value: stats?.pending_joinees.toString() || '0', change: '2%', icon: 'person_add', color: 'primary' },
+    { title: 'Welcome Kits Due', value: stats?.welcome_kits_due.toString() || '0', change: '0%', icon: 'inventory_2', color: 'warning' },
+    { title: 'Active Rules', value: stats?.active_rules.toString() || '0', change: 'Active', icon: 'bolt', color: 'primary' },
+  ];
 
   return (
     <MainLayout title="Dashboard Overview" subtitle="Here's what's happening with your onboardings today.">
@@ -24,9 +49,19 @@ const Dashboard: React.FC = () => {
         {/* Date Filter */}
         <div className="flex justify-end mb-2">
           <div className="flex items-center gap-2 bg-white border border-gray-200 rounded p-1 shadow-sm dark:bg-slate-800 dark:border-slate-700">
-            <button className="px-3 py-1 text-xs font-medium bg-gray-100 text-text-main rounded shadow-sm dark:bg-slate-700 dark:text-white">7 Days</button>
-            <button className="px-3 py-1 text-xs font-medium text-text-secondary hover:bg-gray-50 rounded dark:hover:bg-slate-700">30 Days</button>
-            <button className="px-3 py-1 text-xs font-medium text-text-secondary hover:bg-gray-50 rounded dark:hover:bg-slate-700">Quarter</button>
+            {(['7d', '30d', 'quarter'] as DateFilter[]).map((f) => (
+              <button
+                key={f}
+                onClick={() => setDateFilter(f)}
+                className={`px-3 py-1 text-xs font-medium rounded transition-colors ${
+                  dateFilter === f
+                    ? 'bg-primary text-white shadow-sm'
+                    : 'text-text-secondary hover:bg-gray-50 dark:hover:bg-slate-700'
+                }`}
+              >
+                {DATE_FILTER_LABELS[f]}
+              </button>
+            ))}
           </div>
         </div>
 
@@ -83,7 +118,7 @@ const Dashboard: React.FC = () => {
                     <div className="w-full mx-2 bg-primary/20 h-full absolute bottom-0"></div>
                     <div
                       className={`w-full mx-4 bg-primary rounded-t-sm relative transition-all group-hover:bg-primary-hover ${
-                        week.status === 'projection' ? 'bg-primary/40 border-t-2 border-primary border-dashed' : 'h-[' + week.value + '%]'
+                        week.status === 'projection' ? 'bg-primary/40 border-t-2 border-primary border-dashed' : ''
                       }`}
                       style={{ height: `${week.value}%` }}
                     >
@@ -105,7 +140,7 @@ const Dashboard: React.FC = () => {
             </div>
             <div className="flex-1 overflow-y-auto max-h-[400px]">
               <ul className="divide-y divide-gray-100 dark:divide-slate-800">
-                {activityFeed.map((item) => (
+                {stats?.activity.map((item) => (
                   <li key={item.id} className="p-4 hover:bg-gray-50 transition-colors cursor-pointer dark:hover:bg-slate-800/50">
                     <div className="flex gap-3">
                       <div className="mt-1 min-w-[24px]">

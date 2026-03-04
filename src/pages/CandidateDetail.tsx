@@ -1,24 +1,78 @@
-import React from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, Link, useParams } from 'react-router-dom';
 import { MainLayout } from '../layouts/MainLayout';
+import { api, type Candidate, type BackendAuditLog } from '../api';
+import EditCandidateModal from '../components/EditCandidateModal';
 
-const timelineItems = [
-  { id: 1, type: 'error', time: 'Today, 10:42 AM', title: 'Validation Error Detected', detail: 'Automated scan of Tax Form W-4 detected invalid SSN pattern (###-##-#### required).', user: 'System', errorCode: 'VAL_SSN_PATTERN_MISMATCH' },
-  { id: 4, type: 'automation', time: 'Yesterday, 9:00 AM', title: 'Automation Rule Triggered', detail: 'Rule Eng_Onboarding_T-14 executed successfully.', user: 'System', attachments: ['NDA_v4.pdf', 'Benefits_Guide.pdf', 'W4_2023.pdf'] },
-  { id: 5, type: 'create', time: 'Oct 10, 2:00 PM', title: 'Profile Created', detail: 'Imported from candidates_q3.csv by Admin User.', user: 'Admin' },
-];
+interface TimelineItem {
+  id: string;
+  type: string;
+  title: string;
+  detail: string;
+  time: string;
+  user: string;
+  errorCode?: string;
+  attachments?: string[];
+}
+
+function mapAuditLog(log: BackendAuditLog): TimelineItem {
+  const typeMap: Record<string, string> = {
+    created: 'create', updated: 'update',
+    email_sent: 'automation', slack_sent: 'automation', error: 'error',
+  };
+  const titleMap: Record<string, string> = {
+    created: 'Candidate Created', updated: 'Profile Updated',
+    email_sent: 'Email Sent', slack_sent: 'Slack Message Sent', error: 'Error Occurred',
+  };
+  return {
+    id: String(log.id),
+    type: typeMap[log.event_type] ?? 'update',
+    title: titleMap[log.event_type] ?? log.event_type,
+    detail: log.details ?? '',
+    time: log.event_time ? new Date(log.event_time).toLocaleString() : '',
+    user: 'System',
+  };
+}
 
 const CandidateDetail: React.FC = () => {
   const navigate = useNavigate();
+  const { id } = useParams<{ id: string }>();
+  const [candidate, setCandidate] = useState<Candidate | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [timelineItems, setTimelineItems] = useState<TimelineItem[]>([]);
+
+  useEffect(() => {
+    const fetchCandidate = async () => {
+      if (!id) return;
+      try {
+        const [data, activityResponse] = await Promise.all([
+          api.candidates.get(parseInt(id)),
+          api.candidates.activity(parseInt(id)).catch(() => [] as BackendAuditLog[])
+        ]);
+        setCandidate(data);
+        setTimelineItems((activityResponse || []).map(mapAuditLog));
+      } catch (err: any) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchCandidate();
+  }, [id]);
+
+  if (loading) return <MainLayout title="Loading..." subtitle="Fetching candidate details..."><div className="p-8">Loading...</div></MainLayout>;
+  if (error || !candidate) return <MainLayout title="Error" subtitle="Candidate not found"><div className="p-8 text-rose-500">Error: {error || 'Candidate not found'}</div></MainLayout>;
 
   return (
-    <MainLayout title="Sarah Jenkins" subtitle="Senior Backend Engineer • Engineering">
+    <MainLayout title={candidate.candidate_name} subtitle={`${candidate.role || 'No Role'} • ${candidate.group_id ? 'Group ' + candidate.group_id : 'No Group'}`}>
       <main className="p-8 max-w-[1600px] w-full mx-auto">
         {/* Breadcrumbs */}
         <nav className="flex items-center text-sm text-text-secondary mb-6">
           <Link to="/repository" className="hover:text-primary transition-colors">Candidates</Link>
           <span className="material-symbols-outlined text-[16px] mx-2">chevron_right</span>
-          <Link to="/teams" className="hover:text-primary transition-colors">Engineering</Link>
+          <Link to="/groups" className="hover:text-primary transition-colors">Engineering</Link>
           <span className="material-symbols-outlined text-[16px] mx-2">chevron_right</span>
           <span className="text-text-main dark:text-white font-medium">Sarah Jenkins</span>
         </nav>
@@ -32,41 +86,40 @@ const CandidateDetail: React.FC = () => {
               <div className="flex flex-col items-center text-center">
                 <div className="relative mb-4">
                   <div className="size-24 rounded-full border-4 border-background-light dark:border-slate-800 bg-cover bg-center shadow-sm"
-                       style={{ backgroundImage: `url('https://lh3.googleusercontent.com/aida-public/AB6AXuAWaLG4fQbFkkGG7UreJIF6wifRfgDh20EtGrjOF87cqMVK45i3yOWU1PRM8sq12I7yMoRJ8evGZQym5mm9p4LC1A7l65fl6QGNMmwToGt2TF5XGzaVZkM-WUrqwyod8HWzLrUuK48gIEXN14KIeeL0ERvVtesWUmfbZo4jgQ8aMrgsiQpK57FnM-nW2EfS-nkCctfUdtOxk7tN2UCwH-vg2PDhHf7Kx98wdHVkPUh2aAulSucpMuJa1BHBI_vhxvJCtpfIMaO35y42')` }}>
+                    style={{ backgroundImage: `url('https://lh3.googleusercontent.com/aida-public/AB6AXuAWaLG4fQbFkkGG7UreJIF6wifRfgDh20EtGrjOF87cqMVK45i3yOWU1PRM8sq12I7yMoRJ8evGZQym5mm9p4LC1A7l65fl6QGNMmwToGt2TF5XGzaVZkM-WUrqwyod8HWzLrUuK48gIEXN14KIeeL0ERvVtesWUmfbZo4jgQ8aMrgsiQpK57FnM-nW2EfS-nkCctfUdtOxk7tN2UCwH-vg2PDhHf7Kx98wdHVkPUh2aAulSucpMuJa1BHBI_vhxvJCtpfIMaO35y42')` }}>
                   </div>
                   <div className="absolute bottom-0 right-0 bg-success text-white text-[10px] font-bold px-2 py-0.5 rounded-full border-2 border-white dark:border-slate-900 shadow-sm uppercase tracking-wide">Active</div>
                 </div>
-                <h1 className="text-xl font-bold text-text-main dark:text-white mb-1">Sarah Jenkins</h1>
-                <p className="text-text-secondary text-sm font-medium mb-4">Senior Backend Engineer</p>
+                <h1 className="text-xl font-bold text-text-main dark:text-white mb-1">{candidate.candidate_name}</h1>
+                <p className="text-text-secondary text-sm font-medium mb-4">{candidate.role || 'N/A'}</p>
 
                 <div className="flex flex-wrap justify-center gap-2 w-full mb-6">
                   <span className="inline-flex items-center px-2.5 py-1 rounded bg-background-light dark:bg-slate-800 text-text-secondary text-xs font-medium border border-border-subtle dark:border-slate-700">
-                    <span className="material-symbols-outlined text-[14px] mr-1">badge</span> EMP-2023-89
+                    <span className="material-symbols-outlined text-[14px] mr-1">badge</span> EMP-{candidate.id}
                   </span>
                   <span className="inline-flex items-center px-2.5 py-1 rounded bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 text-xs font-medium border border-blue-100 dark:border-blue-800/30">
-                    <span className="material-symbols-outlined text-[14px] mr-1">rocket_launch</span> T-Minus 12 Days
+                    <span className="material-symbols-outlined text-[14px] mr-1">rocket_launch</span> {candidate.status}
                   </span>
                 </div>
 
                 <div className="grid grid-cols-2 gap-4 w-full border-t border-border-subtle dark:border-slate-800 pt-4 mb-6">
                   <div className="text-left">
-                    <p className="text-[10px] text-text-secondary uppercase tracking-wider mb-1">Department</p>
-                    <p className="text-sm font-semibold text-text-main dark:text-white">Engineering</p>
+                    <p className="text-[10px] text-text-secondary uppercase tracking-wider mb-1">Group ID</p>
+                    <p className="text-sm font-semibold text-text-main dark:text-white">{candidate.group_id || 'N/A'}</p>
                   </div>
                   <div className="text-left">
                     <p className="text-[10px] text-text-secondary uppercase tracking-wider mb-1">Joining Date</p>
-                    <p className="text-sm font-semibold text-text-main dark:text-white font-mono">Oct 24, 2023</p>
+                    <p className="text-sm font-semibold text-text-main dark:text-white font-mono">{candidate.joining_date || 'N/A'}</p>
                   </div>
                   <div className="text-left">
-                    <p className="text-[10px] text-text-secondary uppercase tracking-wider mb-1">Manager</p>
+                    <p className="text-[10px] text-text-secondary uppercase tracking-wider mb-1">Reporting Manager</p>
                     <div className="flex items-center gap-2">
-                      <div className="size-5 rounded-full bg-cover bg-center" style={{ backgroundImage: `url('https://lh3.googleusercontent.com/aida-public/AB6AXuD4Gh2sR60oFOzscW3S4Ks_cWbWJV9RqKhtpoDjw3mIlYzPZFjvArxXhLcpy5dP0o5LM08g3DPlebPUTNWr9qRidkkW8s1vlIDEO0KC1zN00iIzIJcub8KwHJziiPUt6l9f5luIiwSGHZ_JKSDkPSAmak8MYoJjZLR8p1mqLMyxiWuNNUfUY7ylvBMKSKlFhmQDsHA3abF4N86KfWq_EHp_ZgHifqju-9q6lLWliHvebpLqnLcBvJKMKYdiIyY_VdZTC7txHt417hjb')` }}></div>
-                      <p className="text-sm font-medium text-text-main dark:text-white">Alex Morgan</p>
+                      <p className="text-sm font-medium text-text-main dark:text-white">{candidate.reporting_manager_name || 'N/A'}</p>
                     </div>
                   </div>
                   <div className="text-left">
                     <p className="text-[10px] text-text-secondary uppercase tracking-wider mb-1">Location</p>
-                    <p className="text-sm font-semibold text-text-main dark:text-white">San Francisco, CA</p>
+                    <p className="text-sm font-semibold text-text-main dark:text-white">{candidate.location || 'N/A'}</p>
                   </div>
                 </div>
 
@@ -74,7 +127,7 @@ const CandidateDetail: React.FC = () => {
                   <button className="flex items-center justify-center w-full py-2 px-4 bg-primary hover:bg-primary/90 text-white rounded text-sm font-medium transition-colors shadow-sm gap-2">
                     <span className="material-symbols-outlined text-[18px]">mail</span> Resend Invite
                   </button>
-                  <button className="flex items-center justify-center w-full py-2 px-4 bg-surface dark:bg-slate-800 border border-border-subtle dark:border-slate-700 hover:bg-background-light dark:hover:bg-slate-700 text-text-main dark:text-white rounded text-sm font-medium transition-colors gap-2">
+                  <button onClick={() => setIsEditModalOpen(true)} className="flex items-center justify-center w-full py-2 px-4 bg-surface dark:bg-slate-800 border border-border-subtle dark:border-slate-700 hover:bg-background-light dark:hover:bg-slate-700 text-text-main dark:text-white rounded text-sm font-medium transition-colors gap-2">
                     <span className="material-symbols-outlined text-[18px]">edit</span> Edit Profile
                   </button>
                 </div>
@@ -155,19 +208,20 @@ const CandidateDetail: React.FC = () => {
                 </select>
               </div>
               <div className="p-6 overflow-y-auto max-h-[800px]">
-                {timelineItems.map((item, idx) => (
+                {timelineItems.length === 0 ? (
+                  <div className="text-center text-slate-500 py-8 text-sm">No activity items found.</div>
+                ) : timelineItems.map((item, idx) => (
                   <div key={item.id} className={`relative pl-10 pb-8 ${idx === timelineItems.length - 1 ? '' : 'timeline-line'}`}>
-                    <div className={`absolute left-0 top-0 size-8 rounded-full border-2 border-surface dark:border-slate-900 flex items-center justify-center z-10 ${
-                      item.type === 'error' ? 'bg-red-100 text-error dark:bg-red-900/30' :
+                    <div className={`absolute left-0 top-0 size-8 rounded-full border-2 border-surface dark:border-slate-900 flex items-center justify-center z-10 ${item.type === 'error' ? 'bg-red-100 text-error dark:bg-red-900/30' :
                       item.type === 'automation' ? 'bg-purple-50 text-purple-600 dark:bg-purple-900/20' :
-                      item.type === 'create' ? 'bg-green-50 text-success dark:bg-green-900/20' :
-                      'bg-gray-100 text-text-secondary dark:bg-slate-800'
-                    }`}>
+                        item.type === 'create' ? 'bg-green-50 text-success dark:bg-green-900/20' :
+                          'bg-gray-100 text-text-secondary dark:bg-slate-800'
+                      }`}>
                       <span className="material-symbols-outlined text-[16px]">
                         {item.type === 'error' ? 'warning' :
-                         item.type === 'automation' ? 'smart_toy' :
-                         item.type === 'create' ? 'person_add' :
-                         'visibility'}
+                          item.type === 'automation' ? 'smart_toy' :
+                            item.type === 'create' ? 'person_add' :
+                              'visibility'}
                       </span>
                     </div>
                     <div className="flex flex-col gap-1">
@@ -206,6 +260,15 @@ const CandidateDetail: React.FC = () => {
             </div>
           </div>
         </div>
+
+        {candidate && (
+          <EditCandidateModal
+            isOpen={isEditModalOpen}
+            onClose={() => setIsEditModalOpen(false)}
+            candidate={candidate}
+            onCandidateUpdated={(updated) => setCandidate(updated)}
+          />
+        )}
       </main>
     </MainLayout>
   );

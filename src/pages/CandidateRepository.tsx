@@ -1,31 +1,10 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useSearchParams } from 'react-router-dom';
 import { MainLayout } from '../layouts/MainLayout';
 import { clsx } from 'clsx';
+import { api, type Candidate } from '../api';
 
-interface Candidate {
-  id: string;
-  name: string;
-  role: string;
-  email: string;
-  joiningDate: string;
-  status: 'Docs Signed' | 'Pre-boarding' | 'Review Needed' | 'Pending Invite' | 'Active' | 'New' | 'Interview' | 'Review';
-}
-
-const candidates: Candidate[] = [
-  { id: '1', name: 'Sarah Jennings', role: 'Senior DevOps Engineer', email: 's.jennings@example.com', joiningDate: '2023-11-24', status: 'Docs Signed' },
-  { id: '2', name: 'Michael Chen', role: 'Product Designer', email: 'm.chen@design.co', joiningDate: '2023-11-26', status: 'Pre-boarding' },
-  { id: '3', name: 'Jessica Alverez', role: 'Head of Marketing', email: 'j.alverez@example.com', joiningDate: '2023-12-01', status: 'Review Needed' },
-  { id: '4', name: 'David Kim', role: 'Backend Engineer II', email: 'david.k@techcorp.io', joiningDate: '2023-12-05', status: 'Pending Invite' },
-  { id: '5', name: 'Emily Ross', role: 'HR Specialist', email: 'e.ross@example.com', joiningDate: '2023-12-08', status: 'Docs Signed' },
-  { id: '6', name: 'Arthur Pendragon', role: 'Project Manager', email: 'arthur.p@camelot.inc', joiningDate: '2023-12-10', status: 'Pre-boarding' },
-  { id: '7', name: 'Priya Patel', role: 'Data Scientist', email: 'p.patel@data.co', joiningDate: '2023-12-12', status: 'Docs Signed' },
-  { id: '8', name: 'Marcus Thorne', role: 'Security Analyst', email: 'm.thorne@sec.io', joiningDate: '2023-12-15', status: 'Pending Invite' },
-  { id: '9', name: 'Zoe Lin', role: 'UX Researcher', email: 'zoe.lin@design.co', joiningDate: '2023-12-15', status: 'Review Needed' },
-  { id: '10', name: 'Omar Hassan', role: 'Sales Director', email: 'o.hassan@sales.inc', joiningDate: '2023-12-18', status: 'Docs Signed' },
-];
-
-const statusStyles = {
+const statusStyles: Record<string, string> = {
   'Docs Signed': 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400 border-emerald-200 dark:border-emerald-800',
   'Pre-boarding': 'bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-400 border-amber-200 dark:border-amber-800',
   'Review Needed': 'bg-rose-100 text-rose-800 dark:bg-rose-900/30 dark:text-rose-400 border-rose-200 dark:border-rose-800',
@@ -37,14 +16,75 @@ const statusStyles = {
 };
 
 const CandidateRepository: React.FC = () => {
-  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [candidates, setCandidates] = useState<Candidate[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [selectedIds, setSelectedIds] = useState<number[]>([]);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [searchParams] = useSearchParams();
+  const filterGroupId = searchParams.get('group_id');
 
-  const toggleSelect = (id: string) => {
+  const filteredCandidates = candidates.filter(c =>
+    (!filterGroupId || c.group_id?.toString() === filterGroupId) &&
+    ((c.candidate_name || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (c.candidate_email || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+      (c.role || '').toLowerCase().includes(searchQuery.toLowerCase()))
+  );
+
+  useEffect(() => {
+    const fetchCandidates = async () => {
+      try {
+        const data = await api.candidates.list();
+        setCandidates(data);
+      } catch (err: any) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchCandidates();
+  }, []);
+
+  const toggleSelect = (id: number) => {
     setSelectedIds(prev => prev.includes(id) ? prev.filter(i => i !== id) : [...prev, id]);
   };
 
   const toggleSelectAll = () => {
-    setSelectedIds(prev => prev.length === candidates.length ? [] : candidates.map(c => c.id));
+    setSelectedIds(prev => prev.length === filteredCandidates.length ? [] : filteredCandidates.map(c => c.id));
+  };
+
+  // Delete handler
+  const handleDelete = async (id: number) => {
+    if (!window.confirm('Are you sure you want to delete this candidate?')) return;
+    try {
+      setLoading(true);
+      await api.candidates.delete(id);
+      const data = await api.candidates.list();
+      setCandidates(data);
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Bulk delete handler
+  const handleBulkDelete = async () => {
+    if (selectedIds.length === 0) return;
+    if (!window.confirm(`Are you sure you want to delete ${selectedIds.length} candidates?`)) return;
+    setLoading(true);
+    setError(null);
+    try {
+      await api.candidates.bulkDelete(selectedIds);
+      // Refresh list after deletion
+      const data = await api.candidates.list();
+      setCandidates(data);
+      setSelectedIds([]);
+    } catch (err: any) {
+      setError(err.message || 'Failed to delete candidates');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -65,6 +105,8 @@ const CandidateRepository: React.FC = () => {
                 placeholder="Search by name, role, or email..."
                 type="text"
                 aria-label="Search candidates"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
             <button className="flex items-center gap-2 px-3 py-2 text-sm font-medium text-slate-700 dark:text-slate-200 bg-white dark:bg-surface-dark border border-slate-300 dark:border-slate-600 rounded hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary transition-colors shadow-sm">
@@ -74,7 +116,7 @@ const CandidateRepository: React.FC = () => {
             </button>
           </div>
           <div className="flex items-center gap-2 text-sm text-slate-500">
-            <span>Showing 1-10 of 1,248 candidates</span>
+            <span>Showing {filteredCandidates.length} candidates</span>
             <div className="flex rounded border border-slate-300 dark:border-slate-600 bg-white dark:bg-surface-dark">
               <button className="p-1 hover:bg-slate-50 dark:hover:bg-slate-700 rounded-l border-r border-slate-300 dark:border-slate-600">
                 <span className="material-symbols-outlined text-lg">chevron_left</span>
@@ -107,60 +149,96 @@ const CandidateRepository: React.FC = () => {
                     </div>
                   </th>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Role</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Email</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Group</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Location</th>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Joining Date</th>
                   <th className="px-4 py-3 text-left text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Status</th>
                   <th className="px-4 py-3 text-right text-xs font-semibold text-slate-500 dark:text-slate-400 uppercase tracking-wider w-16">Actions</th>
                 </tr>
               </thead>
               <tbody className="bg-surface dark:bg-slate-900 divide-y divide-slate-200 dark:divide-slate-700">
-                {candidates.map((candidate) => (
-                  <tr
-                    key={candidate.id}
-                    className={clsx(
-                      "group/row hover:bg-[#EDF5FF] dark:hover:bg-slate-800 transition-colors h-12",
-                      selectedIds.includes(candidate.id) && "bg-primary/5"
-                    )}
-                  >
-                    <td className="px-4 py-2 whitespace-nowrap">
-                      <input
-                        type="checkbox"
-                        className="custom-checkbox h-4 w-4"
-                        checked={selectedIds.includes(candidate.id)}
-                        onChange={() => toggleSelect(candidate.id)}
-                      />
-                    </td>
-                    <td className="px-4 py-2 whitespace-nowrap">
-                      <Link to={`/candidate/${candidate.id}`} className="font-bold text-sm text-slate-900 dark:text-white hover:text-primary transition-colors cursor-pointer">
-                        {candidate.name}
-                      </Link>
-                    </td>
-                    <td className="px-4 py-2 whitespace-nowrap text-sm text-slate-600 dark:text-slate-300">{candidate.role}</td>
-                    <td className="px-4 py-2 whitespace-nowrap text-sm text-slate-500 dark:text-slate-400">{candidate.email}</td>
-                    <td className="px-4 py-2 whitespace-nowrap text-sm font-mono text-slate-600 dark:text-slate-300">{candidate.joiningDate}</td>
-                    <td className="px-4 py-2 whitespace-nowrap">
-                      <span className={clsx("inline-flex items-center px-2.5 py-0.5 rounded text-[10px] font-bold border", statusStyles[candidate.status] || 'bg-slate-100')}>
-                        {candidate.status}
-                      </span>
-                    </td>
-                    <td className="px-4 py-2 whitespace-nowrap text-right text-sm font-medium">
-                      <div className="flex items-center justify-end gap-2">
-                        <button
-                          className="opacity-0 group-hover/row:opacity-100 transition-opacity text-slate-400 hover:text-primary"
-                          aria-label={`Edit ${candidate.name}`}
-                        >
-                          <span className="material-symbols-outlined text-lg">edit</span>
-                        </button>
-                        <button
-                          className="text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
-                          aria-label={`More actions for ${candidate.name}`}
-                        >
-                          <span className="material-symbols-outlined text-lg">more_horiz</span>
-                        </button>
-                      </div>
-                    </td>
+                {loading ? (
+                  <tr>
+                    <td colSpan={8} className="text-center py-8">Loading candidates...</td>
                   </tr>
-                ))}
+                ) : error ? (
+                  <tr>
+                    <td colSpan={8} className="text-center py-8 text-rose-500">Error: {error}</td>
+                  </tr>
+                ) : candidates.length === 0 ? (
+                  <tr>
+                    <td colSpan={8} className="text-center py-8 text-slate-500">No candidates found.</td>
+                  </tr>
+                ) : filteredCandidates.length === 0 ? (
+                  <tr>
+                    <td colSpan={8} className="text-center py-8 text-slate-500">No candidates found matching "{searchQuery}".</td>
+                  </tr>
+                ) : (
+                  filteredCandidates.map((candidate) => (
+                    <tr
+                      key={candidate.id}
+                      className={clsx(
+                        "group/row hover:bg-[#EDF5FF] dark:hover:bg-slate-800 transition-colors h-12",
+                        selectedIds.includes(candidate.id) && "bg-primary/5"
+                      )}
+                    >
+                      <td className="px-4 py-2 whitespace-nowrap">
+                        <input
+                          type="checkbox"
+                          className="custom-checkbox h-4 w-4"
+                          checked={selectedIds.includes(candidate.id)}
+                          onChange={() => toggleSelect(candidate.id)}
+                        />
+                      </td>
+                      <td className="px-4 py-2 whitespace-nowrap">
+                        <div className="flex items-center">
+                          <div className="flex-shrink-0 h-10 w-10">
+                            <div className="h-10 w-10 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-700 font-bold border border-indigo-200">
+                              {candidate.candidate_name.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase()}
+                            </div>
+                          </div>
+                          <div className="ml-4 text-left">
+                            <div className="text-sm font-bold text-text-main dark:text-white">
+                              {candidate.candidate_name}
+                            </div>
+                            <div className="text-xs text-text-secondary">
+                              {candidate.candidate_email}
+                            </div>
+                          </div>
+                        </div>
+                      </td>
+                      <td className="px-4 py-2 whitespace-nowrap text-sm text-slate-500 dark:text-slate-400">{candidate.role || 'N/A'}</td>
+                      <td className="px-4 py-2 whitespace-nowrap text-sm text-slate-500 dark:text-slate-400">
+                        <span className="px-2 py-1 rounded bg-slate-100 dark:bg-slate-800 text-[10px] font-bold">GRP-{candidate.group_id || 'NA'}</span>
+                      </td>
+                      <td className="px-4 py-2 whitespace-nowrap text-sm text-slate-500 dark:text-slate-400 capitalize">{candidate.location || 'Remote'}</td>
+                      <td className="px-4 py-2 whitespace-nowrap text-sm text-slate-500 dark:text-slate-400">{candidate.joining_date || 'TBD'}</td>
+                      <td className="px-4 py-2 whitespace-nowrap">
+                        <span className={clsx("inline-flex items-center px-2.5 py-0.5 rounded text-[10px] font-bold border", statusStyles[candidate.status] || 'bg-slate-100')}>
+                          {candidate.status}
+                        </span>
+                      </td>
+                      <td className="px-4 py-2 whitespace-nowrap text-right text-sm font-medium">
+                        <div className="flex items-center justify-end gap-2">
+                          <Link
+                            to={`/candidate/${candidate.id}`}
+                            className="opacity-0 group-hover/row:opacity-100 transition-opacity text-slate-400 hover:text-primary"
+                            aria-label={`View ${candidate.candidate_name}`}
+                          >
+                            <span className="material-symbols-outlined text-lg">edit</span>
+                          </Link>
+                          <button
+                            onClick={() => handleDelete(candidate.id)}
+                            className="opacity-0 group-hover/row:opacity-100 transition-opacity text-slate-400 hover:text-rose-500"
+                            aria-label={`Delete ${candidate.candidate_name}`}
+                          >
+                            <span className="material-symbols-outlined text-lg">delete</span>
+                          </button>
+                        </div>
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           </div>
@@ -181,11 +259,21 @@ const CandidateRepository: React.FC = () => {
                 <span className="material-symbols-outlined group-hover:scale-110 transition-transform">mail</span>
                 <span className="text-sm font-medium hidden md:inline">Send Email</span>
               </button>
-              <button className="flex items-center gap-2 hover:text-slate-300 transition-colors group">
+              <button
+                className="flex items-center gap-2 hover:text-slate-300 transition-colors group"
+                onClick={() => {
+                  const base = import.meta.env.VITE_API_URL || '/api';
+                  window.open(`${base}/candidates/export`, '_blank');
+                }}
+              >
                 <span className="material-symbols-outlined group-hover:scale-110 transition-transform">download</span>
                 <span className="text-sm font-medium hidden md:inline">Export</span>
               </button>
-              <button className="flex items-center gap-2 text-red-400 hover:text-red-500 transition-colors group">
+              <button
+                className="flex items-center gap-2 text-red-400 hover:text-red-500 transition-colors group"
+                onClick={handleBulkDelete}
+                disabled={loading}
+              >
                 <span className="material-symbols-outlined group-hover:scale-110 transition-transform">delete</span>
                 <span className="text-sm font-medium hidden md:inline">Delete</span>
               </button>

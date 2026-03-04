@@ -12,7 +12,7 @@ const HelpGuide: React.FC = () => {
       steps: [
         { title: '1. Import Candidates', desc: 'Use the Import Wizard to upload candidate data from CSV/XLSX. You can map custom fields and resolve duplicates during this stage.', icon: 'upload_file' },
         { title: '2. Configure Rules', desc: 'Set up Automation Rules to trigger document dispatch (NDAs, Handbooks) via Email or Slack based on joining dates.', icon: 'psychology' },
-        { title: '3. Manage Teams', desc: 'Organize your workforce into Departments and Teams to target automation rules effectively.', icon: 'groups' },
+        { title: '3. Manage Groups', desc: 'Organize your workforce into Departments and Groups to target automation rules effectively.', icon: 'groups' },
         { title: '4. Monitor Repository', desc: 'Track compliance status, view signed documents, and manage individual candidate profiles in the Repository.', icon: 'table_chart' },
       ]
     },
@@ -22,7 +22,7 @@ const HelpGuide: React.FC = () => {
       content: 'Understanding the relationship between modules is key to maximizing efficiency:',
       links: [
         { from: 'Import Wizard', to: 'Repository', logic: 'Successfully imported records immediately appear in the Candidate Repository.' },
-        { from: 'Teams', to: 'Automation Rules', logic: 'Rules use Team/Department tags as "Targets" to decide who receives which documents.' },
+        { from: 'Groups', to: 'Automation Rules', logic: 'Rules use Group/Department tags as "Targets" to decide who receives which documents.' },
         { from: 'Rules', to: 'Candidate Detail', logic: 'When a rule triggers, it logs an event in the candidate\'s timeline and updates their document checklist.' },
       ]
     },
