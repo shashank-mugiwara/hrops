@@ -38,8 +38,8 @@ const GroupsDepartments: React.FC = () => {
           activeRules: rulesData.filter(r => r.status === 'active').length,
           pendingRequests: candidatesData.filter(c => c.status !== 'Active').length
         });
-      } catch (err: any) {
-        setError(err.message);
+      } catch (err) {
+        setError((err instanceof Error ? err.message : String(err)));
       } finally {
         setLoading(false);
       }
@@ -215,8 +215,8 @@ const GroupsDepartments: React.FC = () => {
                     const groupsData = await api.groups.list();
                     setGroups(groupsData);
                     setSelectedIds([]);
-                  } catch (err: any) {
-                    setError(err.message);
+                  } catch (err) {
+                    setError((err instanceof Error ? err.message : String(err)));
                   } finally {
                     setLoading(false);
                   }

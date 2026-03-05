@@ -151,8 +151,8 @@ const ImportWizard: React.FC = () => {
       result.duplicates.forEach(email => { actions[email] = 'skip'; });
       setDuplicateActions(actions);
       setCurrentStep(3);
-    } catch (err: any) {
-      alert('Could not check for duplicates: ' + err.message);
+    } catch (err) {
+      alert('Could not check for duplicates: ' + (err instanceof Error ? err.message : String(err)));
     } finally {
       setCheckingDupes(false);
     }
@@ -189,14 +189,14 @@ const ImportWizard: React.FC = () => {
         try {
           await api.candidates.create(candidate);
           created++;
-        } catch (err: any) {
-          errors.push(`${email || 'unknown'}: ${err.message}`);
+        } catch (err) {
+          errors.push(`${email || 'unknown'}: ${(err instanceof Error ? err.message : String(err))}`);
         }
       }
       setImportResult({ created, updated, skipped });
       setCurrentStep(4);
-    } catch (error: any) {
-      alert('Import failed: ' + error.message);
+    } catch (error) {
+      alert('Import failed: ' + (error instanceof Error ? error.message : String(error)));
     } finally {
       setImporting(false);
     }
