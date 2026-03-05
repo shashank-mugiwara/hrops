@@ -20,9 +20,9 @@ async function request<T>(endpoint: string, options: RequestInit = {}): Promise<
 
 export const client = {
   get: <T>(endpoint: string, options?: RequestInit) => request<T>(endpoint, { ...options, method: 'GET' }),
-  post: <T>(endpoint: string, body: any, options?: RequestInit) =>
+  post: <T, TBody = unknown>(endpoint: string, body: TBody, options?: RequestInit) =>
     request<T>(endpoint, { ...options, method: 'POST', body: JSON.stringify(body) }),
-  put: <T>(endpoint: string, body: any, options?: RequestInit) =>
+  put: <T, TBody = unknown>(endpoint: string, body: TBody, options?: RequestInit) =>
     request<T>(endpoint, { ...options, method: 'PUT', body: JSON.stringify(body) }),
   delete: <T>(endpoint: string, options?: RequestInit) => request<T>(endpoint, { ...options, method: 'DELETE' }),
 };
