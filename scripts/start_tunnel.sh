@@ -1,17 +1,14 @@
 #!/bin/bash
 
-# Define the log file to monitor
-LOG_FILE="$HOME/.pm2/logs/tunnel-error.log"
-
-echo "Watching $LOG_FILE for trycloudflare.com URLs..."
-
-# Tail the log file and process new lines
-tail -F "$LOG_FILE" | while read -r line; do
+# Run cloudflared and process its output line by line
+cloudflared tunnel --protocol http2 --url http://localhost:5173 2>&1 | while read -r line; do
+    echo "$line"
     # Match the cloudflare url
     if [[ "$line" =~ (https://[a-zA-Z0-9-]+\.trycloudflare\.com) ]]; then
         URL="${BASH_REMATCH[1]}"
         echo "Detected new tunnel URL: $URL"
         
+        # Update the docs
         # We need to make sure we replace the URL in docs/prd.md
         if [ -f docs/prd.md ]; then
             sed -i.bak -E "s|https://[a-zA-Z0-9-]+\.trycloudflare\.com|$URL|g" docs/prd.md
@@ -24,8 +21,6 @@ tail -F "$LOG_FILE" | while read -r line; do
                 git commit -m "docs: update prototype url to $URL"
                 git pull --rebase --autostash origin main
                 git push origin main
-            else
-                echo "URL is already up to date in docs/prd.md."
             fi
         fi
     fi

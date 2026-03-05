@@ -109,3 +109,4 @@ Click **Save**. The system will verify the rule and show you how many upcoming c
 
 ## Summary
 The primary goal of this portal is to transition HR operations from manual spreadsheets to a visual, automated workflow. By reviewing the [prototype skeleton](https://concerns-parliament-winner-bride.trycloudflare.com/), you can click through the different tabs and see the foundation of this system in action. Remember, our AI developer will continue adding features and refining the functional design every night!
+ 
