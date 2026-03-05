@@ -31,6 +31,13 @@ The high-level status board.
 
 ![Dashboard Overview](https://placehold.co/800x400/F4F7FB/161616?text=Dashboard+Overview)
 
+
+
+### 📊 Analytics & Reports
+The high-level analytical view of the HR Ops pipeline.
+- **What it does:** Displays data-driven metrics directly from the system, including total candidate counts, trailing 12-week intake volume, and volume distributions by department.
+- **How to use it:** Use this screen to spot hiring trends, identify high-volume departments, and track how many automation rules are currently active.
+
 ### 👥 Candidate Repository
 The central database for all incoming hires.
 - **What it does:** Displays a dense, easily readable list of all candidates with powerful filtering and search options.
