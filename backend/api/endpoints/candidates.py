@@ -1,10 +1,12 @@
-from typing import Optional
-from fastapi import APIRouter, Depends, HTTPException, Body
-from fastapi.responses import StreamingResponse
-import io
 import csv
+import io
+from typing import Optional
+
+from fastapi import APIRouter, Body, Depends, HTTPException
+from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
-from ... import models, schemas, crud
+
+from ... import crud, models, schemas
 from ...api.deps import get_db
 
 router = APIRouter(
