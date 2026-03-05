@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from .api.endpoints import candidates, groups, departments, rules, documents, welcome, dashboard, templates_api, settings_api
+from .api.endpoints import candidates, groups, departments, rules, documents, welcome, dashboard, templates_api, settings_api, reports
 from .db import init_db
 
 app = FastAPI()
@@ -26,6 +26,7 @@ app.include_router(welcome.router)
 app.include_router(dashboard.router)
 app.include_router(templates_api.router)
 app.include_router(settings_api.router)
+app.include_router(reports.router)
 
 @app.get("/")
 def read_root():
