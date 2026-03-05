@@ -22,14 +22,25 @@ module.exports = {
     },
     {
       name: 'tunnel',
-      script: 'cloudflared',
-      args: 'tunnel --protocol http2 --url http://localhost:5173',
-      interpreter: 'none',
+      script: './scripts/start_tunnel.sh',
+      interpreter: 'bash',
       watch: false,
     },
     {
       name: 'auto_updater',
       script: './auto_updater.sh',
+      interpreter: 'bash',
+      watch: false,
+    },
+    {
+      name: 'mark_prs_ready',
+      script: './scripts/mark_prs_ready.sh',
+      interpreter: 'bash',
+      watch: false,
+    },
+    {
+      name: 'manage_jules_prs',
+      script: './scripts/manage_jules_prs.sh',
       interpreter: 'bash',
       watch: false,
     },
