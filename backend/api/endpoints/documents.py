@@ -2,9 +2,11 @@ import os
 import re
 import shutil
 import uuid
-from fastapi import APIRouter, Depends, HTTPException, UploadFile, File
+
+from fastapi import APIRouter, Depends, File, HTTPException, UploadFile
 from sqlalchemy.orm import Session
-from ... import models, schemas, crud
+
+from ... import crud, models, schemas
 from ...api.deps import get_db
 
 router = APIRouter(
