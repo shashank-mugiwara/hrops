@@ -22,7 +22,14 @@ module.exports = {
     },
     {
       name: 'tunnel',
-      script: './scripts/start_tunnel.sh',
+      script: 'cloudflared',
+      args: 'tunnel --protocol http2 --url http://localhost:5173',
+      interpreter: 'none',
+      watch: false,
+    },
+    {
+      name: 'watch_tunnel',
+      script: './scripts/watch_tunnel_url.sh',
       interpreter: 'bash',
       watch: false,
     },
