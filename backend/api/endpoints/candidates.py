@@ -102,10 +102,7 @@ def get_candidate_activity(candidate_id: int, db: Session = Depends(get_db)):
 @router.post("/bulk_action")
 def bulk_action(action: str = Body(...), candidate_ids: list[int] = Body(...), db: Session = Depends(get_db)):
     if action == "delete":
-        candidates = db.query(models.Candidate).filter(models.Candidate.id.in_(candidate_ids)).all()
-        deleted = len(candidates)
-        for candidate in candidates:
-            db.delete(candidate)
+        deleted = db.query(models.Candidate).filter(models.Candidate.id.in_(candidate_ids)).delete(synchronize_session=False)
         db.commit()
         return {"action": action, "candidate_ids": candidate_ids, "deleted": deleted, "message": f"Deleted {deleted} candidates."}
     return {"action": action, "candidate_ids": candidate_ids, "message": "Bulk operation not implemented yet."}
