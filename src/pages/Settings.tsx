@@ -65,7 +65,7 @@ const Settings: React.FC = () => {
         slack_app_token: data.slack_app_token ?? '',
         slack_channel_id: data.slack_channel_id ?? '',
       });
-    }).catch((err) => setError(err.message)).finally(() => setLoading(false));
+    }).catch((err) => setError((err instanceof Error ? err.message : String(err)))).finally(() => setLoading(false));
   }, []);
 
   const set = <K extends keyof typeof form>(key: K, value: typeof form[K]) =>
@@ -79,8 +79,8 @@ const Settings: React.FC = () => {
       await api.settings.update(form);
       setSaved(true);
       setTimeout(() => setSaved(false), 3000);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      setError((err instanceof Error ? err.message : String(err)));
     } finally {
       setSaving(false);
     }

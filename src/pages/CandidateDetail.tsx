@@ -53,8 +53,8 @@ const CandidateDetail: React.FC = () => {
         ]);
         setCandidate(data);
         setTimelineItems((activityResponse || []).map(mapAuditLog));
-      } catch (err: any) {
-        setError(err.message);
+      } catch (err) {
+        setError((err instanceof Error ? err.message : String(err)));
       } finally {
         setLoading(false);
       }

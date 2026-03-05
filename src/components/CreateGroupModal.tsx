@@ -46,8 +46,8 @@ const CreateGroupModal: React.FC<CreateGroupModalProps> = ({ isOpen, onClose, on
 
       onCreated?.(newGroup);
       onClose();
-    } catch (err: any) {
-      alert(err.message);
+    } catch (err) {
+      alert((err instanceof Error ? err.message : String(err)));
     } finally {
       setLoading(false);
     }

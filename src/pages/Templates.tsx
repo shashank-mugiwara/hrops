@@ -70,8 +70,8 @@ const Templates: React.FC = () => {
         setTemplates(prev => [...prev, created]);
         setSelectedTemplateId(created.id);
       }
-    } catch (err: any) {
-      alert('Failed to save template: ' + err.message);
+    } catch (err) {
+      alert('Failed to save template: ' + (err instanceof Error ? err.message : String(err)));
     }
   };
 
@@ -83,8 +83,8 @@ const Templates: React.FC = () => {
         setTemplates(remaining);
         setSelectedTemplateId(remaining.length > 0 ? remaining[0].id : null);
         setIsDeleting(false);
-      } catch (err: any) {
-        alert('Failed to delete: ' + err.message);
+      } catch (err) {
+        alert('Failed to delete: ' + (err instanceof Error ? err.message : String(err)));
       }
     } else {
       setIsDeleting(true);
@@ -133,8 +133,8 @@ const Templates: React.FC = () => {
       // Append to comma-separated attachments
       const existing = editBuffer.attachments ? editBuffer.attachments.split(',').map(s => s.trim()).filter(Boolean) : [];
       setEditBuffer({ ...editBuffer, attachments: [...existing, result.filename].join(', ') });
-    } catch (err: any) {
-      alert('File upload failed: ' + err.message);
+    } catch (err) {
+      alert('File upload failed: ' + (err instanceof Error ? err.message : String(err)));
     }
     e.target.value = '';
   };
