@@ -382,13 +382,26 @@ const ImportWizard: React.FC = () => {
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-border-subtle dark:divide-slate-800">
-                          {duplicateEmails.map(email => {
+                          {(() => {
                             const emailHeader = Object.keys(mapping).find(h => mapping[h] === 'candidate_email');
                             const nameHeader = Object.keys(mapping).find(h => mapping[h] === 'candidate_name');
-                            const row = importData.rows.find(r => emailHeader && r[emailHeader] === email);
-                            const nameInFile = nameHeader && row ? row[nameHeader] : '—';
-                            return (
-                              <tr key={email} className="hover:bg-slate-50 dark:hover:bg-slate-800/30">
+
+                            // O(1) lookup map for rows by email
+                            const rowByEmail = new Map();
+                            if (emailHeader) {
+                              for (const row of importData.rows) {
+                                const emailVal = row[emailHeader];
+                                if (emailVal && !rowByEmail.has(emailVal)) {
+                                  rowByEmail.set(emailVal, row);
+                                }
+                              }
+                            }
+
+                            return duplicateEmails.map(email => {
+                              const row = rowByEmail.get(email);
+                              const nameInFile = nameHeader && row ? row[nameHeader] : '—';
+                              return (
+                                <tr key={email} className="hover:bg-slate-50 dark:hover:bg-slate-800/30">
                                 <td className="px-4 py-3 font-mono text-xs">{email}</td>
                                 <td className="px-4 py-3">{nameInFile}</td>
                                 <td className="px-4 py-3 text-right">
@@ -404,8 +417,9 @@ const ImportWizard: React.FC = () => {
                                   </div>
                                 </td>
                               </tr>
-                            );
-                          })}
+                              );
+                            });
+                          })()}
                         </tbody>
                       </table>
                     </div>
