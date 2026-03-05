@@ -151,8 +151,8 @@ const ImportWizard: React.FC = () => {
       result.duplicates.forEach(email => { actions[email] = 'skip'; });
       setDuplicateActions(actions);
       setCurrentStep(3);
-    } catch (err: any) {
-      alert('Could not check for duplicates: ' + err.message);
+    } catch (err) {
+      alert('Could not check for duplicates: ' + (err instanceof Error ? err.message : String(err)));
     } finally {
       setCheckingDupes(false);
     }
@@ -189,14 +189,14 @@ const ImportWizard: React.FC = () => {
         try {
           await api.candidates.create(candidate);
           created++;
-        } catch (err: any) {
-          errors.push(`${email || 'unknown'}: ${err.message}`);
+        } catch (err) {
+          errors.push(`${email || 'unknown'}: ${(err instanceof Error ? err.message : String(err))}`);
         }
       }
       setImportResult({ created, updated, skipped });
       setCurrentStep(4);
-    } catch (error: any) {
-      alert('Import failed: ' + error.message);
+    } catch (error) {
+      alert('Import failed: ' + (error instanceof Error ? error.message : String(error)));
     } finally {
       setImporting(false);
     }
@@ -382,13 +382,26 @@ const ImportWizard: React.FC = () => {
                           </tr>
                         </thead>
                         <tbody className="divide-y divide-border-subtle dark:divide-slate-800">
-                          {duplicateEmails.map(email => {
+                          {(() => {
                             const emailHeader = Object.keys(mapping).find(h => mapping[h] === 'candidate_email');
                             const nameHeader = Object.keys(mapping).find(h => mapping[h] === 'candidate_name');
-                            const row = importData.rows.find(r => emailHeader && r[emailHeader] === email);
-                            const nameInFile = nameHeader && row ? row[nameHeader] : '—';
-                            return (
-                              <tr key={email} className="hover:bg-slate-50 dark:hover:bg-slate-800/30">
+
+                            // O(1) lookup map for rows by email
+                            const rowByEmail = new Map();
+                            if (emailHeader) {
+                              for (const row of importData.rows) {
+                                const emailVal = row[emailHeader];
+                                if (emailVal && !rowByEmail.has(emailVal)) {
+                                  rowByEmail.set(emailVal, row);
+                                }
+                              }
+                            }
+
+                            return duplicateEmails.map(email => {
+                              const row = rowByEmail.get(email);
+                              const nameInFile = nameHeader && row ? row[nameHeader] : '—';
+                              return (
+                                <tr key={email} className="hover:bg-slate-50 dark:hover:bg-slate-800/30">
                                 <td className="px-4 py-3 font-mono text-xs">{email}</td>
                                 <td className="px-4 py-3">{nameInFile}</td>
                                 <td className="px-4 py-3 text-right">
@@ -404,8 +417,9 @@ const ImportWizard: React.FC = () => {
                                   </div>
                                 </td>
                               </tr>
-                            );
-                          })}
+                              );
+                            });
+                          })()}
                         </tbody>
                       </table>
                     </div>

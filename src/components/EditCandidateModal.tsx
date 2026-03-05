@@ -64,8 +64,8 @@ const EditCandidateModal: React.FC<EditCandidateModalProps> = ({
             const updated = await api.candidates.update(candidate.id, formData);
             onCandidateUpdated(updated);
             onClose();
-        } catch (err: any) {
-            setError(err.message || 'Failed to update candidate');
+        } catch (err) {
+            setError((err instanceof Error ? err.message : String(err)) || 'Failed to update candidate');
         } finally {
             setLoading(false);
         }

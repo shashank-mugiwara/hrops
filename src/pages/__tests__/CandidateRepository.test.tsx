@@ -57,11 +57,11 @@ const mockedApi = api as jest.Mocked<typeof api>;
 describe('CandidateRepository', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockedApi.groups.list.mockResolvedValue(mockGroups);
+    (mockedApi.groups.list as jest.Mock).mockResolvedValue(mockGroups);
   });
 
   it('shows loading state then displays candidates', async () => {
-    mockedApi.candidates.list.mockResolvedValue(mockCandidates);
+    (mockedApi.candidates.list as jest.Mock).mockResolvedValue(mockCandidates);
     render(
       <MemoryRouter>
         <CandidateRepository />
@@ -77,7 +77,7 @@ describe('CandidateRepository', () => {
   });
 
   it('shows error state when API fails', async () => {
-    mockedApi.candidates.list.mockRejectedValue(new Error('API error'));
+    (mockedApi.candidates.list as jest.Mock).mockRejectedValue(new Error('API error'));
     render(
       <MemoryRouter>
         <CandidateRepository />
@@ -89,7 +89,7 @@ describe('CandidateRepository', () => {
   });
 
   it('shows empty state when no candidates', async () => {
-    mockedApi.candidates.list.mockResolvedValue([]);
+    (mockedApi.candidates.list as jest.Mock).mockResolvedValue([]);
     render(
       <MemoryRouter>
         <CandidateRepository />
