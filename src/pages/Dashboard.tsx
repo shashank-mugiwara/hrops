@@ -36,6 +36,9 @@ const Dashboard: React.FC = () => {
   if (loading && !stats) return <MainLayout title="Dashboard Overview"><div className="p-8">Loading dashboard...</div></MainLayout>;
   if (error && !stats) return <MainLayout title="Dashboard Overview"><div className="p-8 text-rose-500">Error: {error}</div></MainLayout>;
 
+
+  const maxIntake = Math.max(...(stats?.intake_volume || []).map(w => w.intake + w.notifications + w.documents), 10);
+
   const kpiData = [
     { title: 'Pending Joinees', value: stats?.pending_joinees.toString() || '0', change: '2%', icon: 'person_add', color: 'primary' },
     { title: 'Welcome Kits Due', value: stats?.welcome_kits_due.toString() || '0', change: '0%', icon: 'inventory_2', color: 'warning' },
@@ -97,6 +100,11 @@ const Dashboard: React.FC = () => {
                 <h3 className="text-base font-semibold text-text-main dark:text-white">Intake Volume</h3>
                 <p className="text-xs text-text-secondary mt-1">Projected joiners over the next 4 weeks</p>
               </div>
+              <div className="flex gap-4 text-[10px] text-text-secondary">
+                <div className="flex items-center gap-1"><div className="w-2 h-2 bg-primary rounded"></div> Intake</div>
+                <div className="flex items-center gap-1"><div className="w-2 h-2 bg-warning rounded"></div> Notifications</div>
+                <div className="flex items-center gap-1"><div className="w-2 h-2 bg-success rounded"></div> Documents</div>
+              </div>
               <button
                 onClick={() => navigate('/reports')}
                 className="text-xs font-medium text-primary hover:text-primary-hover flex items-center gap-1"
@@ -107,29 +115,50 @@ const Dashboard: React.FC = () => {
             </div>
             {/* Simple Bar Chart Representation */}
             <div className="flex-1 flex items-end gap-4 sm:gap-8 justify-between px-4 pb-2 border-b border-gray-100 dark:border-slate-800">
-              {[
-                { label: 'Aug 21 - 27', value: 65, status: 'actual' },
-                { label: 'Aug 28 - Sep 3', value: 82, status: 'actual' },
-                { label: 'Sep 4 - 10', value: 45, status: 'projection' },
-                { label: 'Sep 11 - 17', value: 30, status: 'projection' },
-              ].map((week) => (
+              {(stats?.intake_volume || []).map((week) => {
+
+                const intakePct = Math.max((week.intake / maxIntake) * 100, 0);
+                const notifPct = Math.max((week.notifications / maxIntake) * 100, 0);
+                const docPct = Math.max((week.documents / maxIntake) * 100, 0);
+
+                return (
                 <div key={week.label} className="flex flex-col items-center gap-2 w-full group cursor-pointer">
                   <div className="relative w-full bg-gray-50 rounded-t h-48 flex items-end justify-center overflow-hidden dark:bg-slate-800/50">
-                    <div className="w-full mx-2 bg-primary/20 h-full absolute bottom-0"></div>
-                    <div
-                      className={`w-full mx-4 bg-primary rounded-t-sm relative transition-all group-hover:bg-primary-hover ${
-                        week.status === 'projection' ? 'bg-primary/40 border-t-2 border-primary border-dashed' : ''
-                      }`}
-                      style={{ height: `${week.value}%` }}
-                    >
-                      <div className="absolute -top-8 left-1/2 -translate-x-1/2 bg-text-main text-white text-[10px] py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity">
-                        {week.value} Candidates
+                    {/* Background indicator */}
+                    <div className="w-full mx-2 bg-slate-100 dark:bg-slate-700/30 h-full absolute bottom-0"></div>
+
+                    {/* Stacked Bars */}
+                    <div className="w-full mx-4 relative flex flex-col justify-end gap-0.5 h-full z-0">
+                      {/* Documents */}
+                      {docPct > 0 && <div
+                        className="w-full bg-success rounded-t-sm transition-all"
+                        style={{ height: `${docPct}%` }}
+                      ></div>}
+
+                      {/* Notifications */}
+                      {notifPct > 0 && <div
+                        className={`w-full bg-warning transition-all ${docPct === 0 ? 'rounded-t-sm' : ''}`}
+                        style={{ height: `${notifPct}%` }}
+                      ></div>}
+
+                      {/* Intake */}
+                      {intakePct > 0 && <div
+                        className={`w-full bg-primary transition-all ${(docPct === 0 && notifPct === 0) ? 'rounded-t-sm' : ''} ${week.status === 'projection' ? 'bg-primary/40 border-t-2 border-primary border-dashed' : ''}`}
+                        style={{ height: `${intakePct}%` }}
+                      ></div>}
+
+                      {/* Tooltip */}
+                      <div className="absolute bottom-[105%] left-1/2 -translate-x-1/2 bg-text-main text-white text-[10px] py-1.5 px-3 rounded opacity-0 group-hover:opacity-100 transition-opacity z-10 w-max pointer-events-none flex flex-col gap-1 shadow-lg">
+                        <div className="font-bold border-b border-gray-600 pb-1 mb-1">{week.label}</div>
+                        <div className="flex justify-between gap-3"><span>Intake:</span> <span>{week.intake}</span></div>
+                        <div className="flex justify-between gap-3 text-warning"><span>Notifs:</span> <span>{week.notifications}</span></div>
+                        <div className="flex justify-between gap-3 text-success"><span>Docs:</span> <span>{week.documents}</span></div>
                       </div>
                     </div>
                   </div>
-                  <span className="text-[10px] text-text-secondary font-medium">{week.label}</span>
+                  <span className="text-[10px] text-text-secondary font-medium whitespace-nowrap">{week.label}</span>
                 </div>
-              ))}
+              )})}
             </div>
           </div>
 
