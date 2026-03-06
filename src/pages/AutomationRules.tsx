@@ -37,7 +37,7 @@ const AutomationRules: React.FC = () => {
       if (rulesData.length > 0 && selectedRuleId === null) {
         setSelectedRuleId(rulesData[0].id);
       }
-    } catch (err: any) {
+    } catch (err) {
       console.error(err);
     } finally {
       setLoading(false);
@@ -83,8 +83,8 @@ const AutomationRules: React.FC = () => {
         await api.rules.update(editBuffer.id, editBuffer);
       }
       fetchRules();
-    } catch (err: any) {
-      alert("ERROR: Failed to save rule: " + err.message);
+    } catch (err) {
+      alert("ERROR: Failed to save rule: " + (err instanceof Error ? err.message : String(err)));
     } finally {
       setLoading(false);
     }
@@ -102,8 +102,8 @@ const AutomationRules: React.FC = () => {
       const result = await res.json();
       const existing = editBuffer.template_files ? editBuffer.template_files.split(',').map(s => s.trim()).filter(Boolean) : [];
       setEditBuffer({ ...editBuffer, template_files: [...existing, result.filename].join(', ') });
-    } catch (err: any) {
-      alert('File upload failed: ' + err.message);
+    } catch (err) {
+      alert('File upload failed: ' + (err instanceof Error ? err.message : String(err)));
     }
     e.target.value = '';
   };
@@ -197,8 +197,8 @@ const AutomationRules: React.FC = () => {
                       await api.rules.delete(selectedRuleId);
                       setSelectedRuleId(null);
                       fetchRules();
-                    } catch (err: any) {
-                      alert(err.message);
+                    } catch (err) {
+                      alert((err instanceof Error ? err.message : String(err)));
                     }
                   } else {
                     setIsDeleting(true);

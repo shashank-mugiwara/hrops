@@ -6,7 +6,8 @@ module.exports = {
       tsconfig: './tsconfig.jest.json',
     },
   },
-  setupFilesAfterEnv: ['@testing-library/jest-dom'],
+
+  setupFilesAfterEnv: ['<rootDir>/jest.setup.cjs', '@testing-library/jest-dom'],
   moduleNameMapper: {
     '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
     '^@/(.*)$': '<rootDir>/src/$1',

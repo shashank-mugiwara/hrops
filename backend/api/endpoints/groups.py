@@ -1,6 +1,7 @@
-from fastapi import APIRouter, Depends, HTTPException, Body
+from fastapi import APIRouter, Body, Depends, HTTPException
 from sqlalchemy.orm import Session
-from ... import models, schemas, crud
+
+from ... import crud, models, schemas
 from ...api.deps import get_db
 
 router = APIRouter(
@@ -41,10 +42,7 @@ def delete_group(group_id: int, db: Session = Depends(get_db)):
 @router.post("/bulk_action")
 def bulk_action_groups(action: str = Body(...), group_ids: list[int] = Body(...), db: Session = Depends(get_db)):
     if action == "delete":
-        groups = db.query(models.Group).filter(models.Group.id.in_(group_ids)).all()
-        deleted = len(groups)
-        for group in groups:
-            db.delete(group)
+        deleted = db.query(models.Group).filter(models.Group.id.in_(group_ids)).delete(synchronize_session=False)
         db.commit()
         return {"action": action, "group_ids": group_ids, "deleted": deleted, "message": f"Deleted {deleted} groups."}
     return {"action": action, "group_ids": group_ids, "message": "Bulk operation not implemented yet."}

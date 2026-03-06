@@ -6,7 +6,7 @@ This document outlines the core problem we are solving, the design of our soluti
 
 > **🚧 Prototype Review Notice**
 > A 50% completed skeleton of the frontend is currently available for your review!
-> You can access and explore the live prototype here: **[HR Ops Portal Prototype](https://twiki-ones-fiction-anime.trycloudflare.com/)**
+> You can access and explore the live prototype here: **[HR Ops Portal Prototype](https://concerns-parliament-winner-bride.trycloudflare.com/)**
 >
 > *Please note:* This is a work-in-progress. An AI developer is progressively building and enhancing the application every night, little by little. What you see is currently a structural preview of the final experience.
 
@@ -30,6 +30,13 @@ The high-level status board.
 - **How to use it:** Log in here daily to get a quick operational glance at pending joinees, outstanding tasks, and system health.
 
 ![Dashboard Overview](https://placehold.co/800x400/F4F7FB/161616?text=Dashboard+Overview)
+
+
+
+### 📊 Analytics & Reports
+The high-level analytical view of the HR Ops pipeline.
+- **What it does:** Displays data-driven metrics directly from the system, including total candidate counts, trailing 12-week intake volume, and volume distributions by department.
+- **How to use it:** Use this screen to spot hiring trends, identify high-volume departments, and track how many automation rules are currently active.
 
 ### 👥 Candidate Repository
 The central database for all incoming hires.
@@ -108,4 +115,5 @@ Click **Save**. The system will verify the rule and show you how many upcoming c
 ---
 
 ## Summary
-The primary goal of this portal is to transition HR operations from manual spreadsheets to a visual, automated workflow. By reviewing the [prototype skeleton](https://twiki-ones-fiction-anime.trycloudflare.com/), you can click through the different tabs and see the foundation of this system in action. Remember, our AI developer will continue adding features and refining the functional design every night!
+The primary goal of this portal is to transition HR operations from manual spreadsheets to a visual, automated workflow. By reviewing the [prototype skeleton](https://concerns-parliament-winner-bride.trycloudflare.com/), you can click through the different tabs and see the foundation of this system in action. Remember, our AI developer will continue adding features and refining the functional design every night!
+ 

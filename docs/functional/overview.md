@@ -4,7 +4,7 @@ Welcome to the HR Ops Portal functional documentation. This guide is designed fo
 
 ## Getting Started
 
-To access the portal, navigate to the [HR Ops Dashboard](https://shashank-mugiwara.github.io/hrops/).
+To access the portal, navigate to the [HR Ops Dashboard](https://concerns-parliament-winner-bride.trycloudflare.com/).
 
 ### Core Navigation
 - **Dashboard:** Your operational mission control.

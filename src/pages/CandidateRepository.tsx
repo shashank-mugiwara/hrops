@@ -36,8 +36,8 @@ const CandidateRepository: React.FC = () => {
       try {
         const data = await api.candidates.list();
         setCandidates(data);
-      } catch (err: any) {
-        setError(err.message);
+      } catch (err) {
+        setError((err instanceof Error ? err.message : String(err)));
       } finally {
         setLoading(false);
       }
@@ -61,8 +61,8 @@ const CandidateRepository: React.FC = () => {
       await api.candidates.delete(id);
       const data = await api.candidates.list();
       setCandidates(data);
-    } catch (err: any) {
-      setError(err.message);
+    } catch (err) {
+      setError((err instanceof Error ? err.message : String(err)));
     } finally {
       setLoading(false);
     }
@@ -80,8 +80,8 @@ const CandidateRepository: React.FC = () => {
       const data = await api.candidates.list();
       setCandidates(data);
       setSelectedIds([]);
-    } catch (err: any) {
-      setError(err.message || 'Failed to delete candidates');
+    } catch (err) {
+      setError((err instanceof Error ? err.message : String(err)) || 'Failed to delete candidates');
     } finally {
       setLoading(false);
     }

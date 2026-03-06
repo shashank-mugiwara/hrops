@@ -1,5 +1,4 @@
 """Tests for /candidates/ endpoints."""
-import pytest
 
 
 CANDIDATE_PAYLOAD = {
