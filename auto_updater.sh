@@ -16,6 +16,9 @@ while true; do
     if [ "$LOCAL" != "$REMOTE" ]; then
         echo "$(date): New changes detected on origin/main! Pulling updates..."
         
+        # Stash any local changes
+        git stash
+
         # Pull the latest code
         git pull origin main
         
