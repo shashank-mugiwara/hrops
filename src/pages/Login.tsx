@@ -37,11 +37,11 @@ const Login: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background dark:bg-slate-900 transition-colors">
+    <div className="min-h-screen flex items-center justify-center bg-background-light dark:bg-slate-900 transition-colors">
       <div className="w-full max-w-md p-8 bg-surface dark:bg-slate-800 rounded-xl shadow-xl border border-border-subtle dark:border-slate-700">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold text-text-main dark:text-white mb-2 flex items-center justify-center gap-2">
-            <span className="material-symbols-outlined text-brand-primary">admin_panel_settings</span>
+            <span className="material-symbols-outlined text-primary">admin_panel_settings</span>
             HR Ops Portal
           </h1>
           <p className="text-text-muted dark:text-slate-400">Please sign in to continue</p>
@@ -63,7 +63,7 @@ const Login: React.FC = () => {
               type="text"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="w-full px-4 py-2 border border-border-subtle dark:border-slate-600 rounded bg-background dark:bg-slate-700 text-text-main dark:text-white focus:ring-2 focus:ring-brand-primary focus:border-brand-primary outline-none transition-colors"
+              className="w-full px-4 py-2 border border-border-subtle dark:border-slate-600 rounded bg-background-light dark:bg-slate-700 text-text-main dark:text-white focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-colors"
               placeholder="Enter your username"
               required
             />
@@ -78,7 +78,7 @@ const Login: React.FC = () => {
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="w-full px-4 py-2 border border-border-subtle dark:border-slate-600 rounded bg-background dark:bg-slate-700 text-text-main dark:text-white focus:ring-2 focus:ring-brand-primary focus:border-brand-primary outline-none transition-colors"
+              className="w-full px-4 py-2 border border-border-subtle dark:border-slate-600 rounded bg-background-light dark:bg-slate-700 text-text-main dark:text-white focus:ring-2 focus:ring-primary focus:border-primary outline-none transition-colors"
               placeholder="Enter your password"
               required
             />
@@ -87,7 +87,7 @@ const Login: React.FC = () => {
           <button
             type="submit"
             disabled={loading}
-            className={`w-full py-2 px-4 bg-brand-primary text-white font-medium rounded hover:bg-brand-primary/90 focus:ring-2 focus:ring-brand-primary focus:ring-offset-2 transition-colors flex items-center justify-center gap-2 ${loading ? 'opacity-70 cursor-not-allowed' : ''}`}
+            className={`w-full py-2 px-4 bg-primary text-white font-medium rounded hover:bg-primary/90 focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-colors flex items-center justify-center gap-2 ${loading ? 'opacity-70 cursor-not-allowed' : ''}`}
           >
             {loading ? (
               <span className="material-symbols-outlined animate-spin text-lg">progress_activity</span>
