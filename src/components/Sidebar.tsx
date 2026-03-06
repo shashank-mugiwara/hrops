@@ -76,7 +76,7 @@ export const Sidebar: React.FC = () => {
         </button>
 
         <div className="mt-3 flex items-center gap-3 px-3 py-2 border-t border-border-subtle dark:border-slate-700 pt-3">
-          <div className="w-8 h-8 rounded-full bg-brand-primary flex items-center justify-center text-white font-bold text-sm shadow-sm border border-white dark:border-slate-600">
+          <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-white font-bold text-sm shadow-sm border border-white dark:border-slate-600">
             S
           </div>
           <div className="flex flex-col">
