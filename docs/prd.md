@@ -8,7 +8,7 @@ This document outlines the core problem we are solving, the design of our soluti
 > A 50% completed skeleton of the frontend is currently available for your review!
 > You can access and explore the live prototype here: **[HR Ops Portal Prototype](https://concerns-parliament-winner-bride.trycloudflare.com/)**
 >
-> *Please note:* This is a work-in-progress. An AI developer is progressively building and enhancing the application every night, little by little. What you see is currently a structural preview of the final experience.
+> *Please note:* This is a work-in-progress. This is 100% AI controlled SLDC and my agent is progressively building and enhancing the application every few hours, little by little. What you see is currently a structural preview of the final experience.
 
 ---
 
