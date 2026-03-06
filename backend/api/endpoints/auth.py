@@ -19,7 +19,7 @@ class LoginRequest(BaseModel):
     username: str
     password: str
 
-@router.post("/api/login")
+@router.post("/login")
 def login(request: LoginRequest, db: Session = Depends(get_db)):
     user = db.query(AdminUser).filter(AdminUser.username == request.username).first()
     if not user:

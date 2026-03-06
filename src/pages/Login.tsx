@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import axios from 'axios';
+import { client } from '../api/client';
 
 const Login: React.FC = () => {
   const [username, setUsername] = useState('');
@@ -15,22 +15,18 @@ const Login: React.FC = () => {
     setLoading(true);
 
     try {
-      const response = await axios.post('http://localhost:8000/api/login', {
+      const response = await client.post<{ success: boolean; message: string }>('/login', {
         username,
         password,
       });
 
-      if (response.data.success) {
+      if (response.success) {
         localStorage.setItem('isAuthenticated', 'true');
         // Redirect to dashboard or whatever was previously requested
         navigate('/');
       }
     } catch (err: unknown) {
-      if (axios.isAxiosError(err) && err.response) {
-        setError(err.response.data.detail || 'Invalid username or password');
-      } else {
-        setError('Network error or server unavailable');
-      }
+      setError(err instanceof Error ? err.message : 'Invalid username or password');
     } finally {
       setLoading(false);
     }
