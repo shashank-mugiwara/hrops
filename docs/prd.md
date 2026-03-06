@@ -29,7 +29,7 @@ The high-level status board.
 - **What it does:** Tracks active onboardings, critical alerts (like failed emails), and overall health of the onboarding pipeline.
 - **How to use it:** Log in here daily to get a quick operational glance at pending joinees, outstanding tasks, and system health.
 
-![Dashboard Overview](https://placehold.co/800x400/F4F7FB/161616?text=Dashboard+Overview)
+![Dashboard Overview](/img/dashboard_overview.png)
 
 
 
@@ -43,21 +43,21 @@ The central database for all incoming hires.
 - **What it does:** Displays a dense, easily readable list of all candidates with powerful filtering and search options.
 - **How to use it:** Use this tab to look up specific candidates, edit their details, or trigger manual actions.
 
-![Candidate Repository](https://placehold.co/800x400/F4F7FB/161616?text=Candidate+Repository+Screen)
+![Candidate Repository](/img/candidate_repository.png)
 
 ### 📥 Import Wizard
 The tool to safely ingest external data (like CSV files from recruiting systems).
 - **What it does:** Guides you through uploading spreadsheets, mapping the columns correctly, and resolving any duplicate entries before they enter the system.
 - **How to use it:** Click "Import Candidates" from the Repository to launch the wizard whenever you have a new batch of hires.
 
-![Import Wizard Concept](https://placehold.co/800x400/F4F7FB/161616?text=Import+Wizard+Concept)
+![Import Wizard Concept](/img/import_wizard_step1.png)
 
 ### ⚙️ Automation Rules
 The engine behind our automated document dispatch.
 - **What it does:** Allows you to configure triggers (e.g., "Send NDA 10 days before joining date") so documents go out automatically.
 - **How to use it:** Create rules based on teams, joining dates, and required documents. The system handles the execution, ensuring you never miss a deadline.
 
-![Automation Rules](https://placehold.co/800x400/F4F7FB/161616?text=Automation+Rules+Configuration)
+![Automation Rules](/img/automation_rules.png)
 
 ---
 
@@ -71,17 +71,17 @@ To help you understand how to operate the portal visually, here are two common e
 **Step 1: Start the Import**
 Navigate to the **Candidate Repository** tab and click the **Import Candidates** button. This opens the multi-step Import Wizard.
 
-![Import Wizard - Step 1](https://placehold.co/800x400/0F62FE/FFFFFF?text=Click+Import+Candidates)
+![Import Wizard - Step 1](/img/import_wizard_step1.png)
 
 **Step 2: Upload File & Map Columns**
 Upload your CSV file (e.g., `candidates_q3.csv`). The system will automatically try to match your spreadsheet columns (like "First Name", "Email") to the portal's database. Review and confirm the mapping is correct.
 
-![Import Wizard - Step 2](https://placehold.co/800x400/F4F7FB/161616?text=Upload+and+Map+Columns)
+![Import Wizard - Step 2](/img/import_wizard_step1.png)
 
 **Step 3: Resolve Conflicts (Deduplication)**
 If the system detects that a candidate already exists, it will pause and show a side-by-side comparison ("Existing" vs. "New"). You can visually inspect the differences and choose to merge the records, keeping the most recent data (like an updated joining date).
 
-![Import Wizard - Step 3](https://placehold.co/800x400/F4F7FB/161616?text=Resolve+Data+Conflicts)
+![Import Wizard - Step 3](/img/import_wizard_step1.png)
 
 **Step 4: Confirm and Finish**
 Review the final list of valid records and click **Confirm**. The Dashboard and Repository will instantly update with the new candidates, completely error-free.
@@ -94,7 +94,7 @@ Review the final list of valid records and click **Confirm**. The Dashboard and 
 **Step 1: Create a New Rule**
 Navigate to the **Automation Rules** tab and click **New Rule**.
 
-![Automation Rules - Step 1](https://placehold.co/800x400/0F62FE/FFFFFF?text=Click+New+Rule)
+![Automation Rules - Step 1](/img/automation_rules_step1.png)
 
 **Step 2: Set the Trigger Logic**
 In the configuration screen, set the timeline logic using simple dropdowns:
@@ -102,7 +102,7 @@ In the configuration screen, set the timeline logic using simple dropdowns:
 - **Condition:** Before
 - **Anchor:** Joining Date
 
-![Automation Rules - Step 2](https://placehold.co/800x400/F4F7FB/161616?text=Configure+Trigger+Logic)
+![Automation Rules - Step 2](/img/automation_rules_step1.png)
 
 **Step 3: Attach Documents & Assign Targets**
 Upload the specific documents you want to send (e.g., `NDA_v4.pdf` and `Benefits_Guide.pdf`). Then, assign this rule to apply only to the **Engineering** team.
@@ -110,7 +110,7 @@ Upload the specific documents you want to send (e.g., `NDA_v4.pdf` and `Benefits
 **Step 4: Save and Activate**
 Click **Save**. The system will verify the rule and show you how many upcoming candidates will be affected immediately. The documents are now scheduled automatically!
 
-![Automation Rules - Step 4](https://placehold.co/800x400/F4F7FB/161616?text=Rule+Active+Confirmation)
+![Automation Rules - Step 4](/img/automation_rules_step1.png)
 
 ---
 

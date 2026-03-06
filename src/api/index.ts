@@ -96,6 +96,13 @@ export interface DashboardStats {
   total_candidates: number;
   welcome_kits_due: number;
   activity: ActivityEntry[];
+  intake_volume: {
+    label: string;
+    intake: number;
+    notifications: number;
+    documents: number;
+    status: 'actual' | 'projection';
+  }[];
 }
 
 export const api = {
