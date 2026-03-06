@@ -15,12 +15,13 @@ def init_db():
     # Initialize default admin user
     try:
         import bcrypt
+        import os
         db = SessionLocal()
         # Check if the admin user exists
         admin = db.query(AdminUser).filter(AdminUser.username == "sheerin.taj").first()
         if not admin:
             # Hash the password
-            password = b"jtulcie51A8r9kRm"
+            password = os.environ.get('ADMIN_PASSWORD', 'admin').encode('utf-8')
             salt = bcrypt.gensalt()
             hashed = bcrypt.hashpw(password, salt)
 
