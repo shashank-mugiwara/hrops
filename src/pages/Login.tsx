@@ -3,33 +3,62 @@ import { useNavigate } from 'react-router-dom';
 import { client } from '../api/client';
 
 const Login: React.FC = () => {
+  const [isLoginMode, setIsLoginMode] = useState(true);
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [successMsg, setSuccessMsg] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+    setSuccessMsg(null);
     setLoading(true);
 
-    try {
-      const response = await client.post<{ success: boolean }>('/login', {
-        username,
-        password,
-      });
+    if (isLoginMode) {
+      try {
+        const response = await client.post<{ success: boolean }>('/login', {
+          username,
+          password,
+        });
 
-      if (response.success) {
-        localStorage.setItem('isAuthenticated', 'true');
-        // Redirect to dashboard or whatever was previously requested
-        navigate('/');
+        if (response.success) {
+          localStorage.setItem('isAuthenticated', 'true');
+          // Redirect to dashboard or whatever was previously requested
+          navigate('/');
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : String(err));
+      } finally {
+        setLoading(false);
       }
-    } catch (err) {
-      setError(err instanceof Error ? err.message : String(err));
-    } finally {
-      setLoading(false);
+    } else {
+      try {
+        const response = await client.post<{ success: boolean, message: string }>('/signup', {
+          username,
+          password,
+        });
+
+        if (response.success) {
+          setSuccessMsg('Account created successfully! Please sign in.');
+          setIsLoginMode(true);
+          setPassword('');
+        }
+      } catch (err) {
+        setError(err instanceof Error ? err.message : String(err));
+      } finally {
+        setLoading(false);
+      }
     }
+  };
+
+  const toggleMode = () => {
+    setIsLoginMode(!isLoginMode);
+    setError(null);
+    setSuccessMsg(null);
+    setPassword('');
   };
 
   return (
@@ -40,13 +69,21 @@ const Login: React.FC = () => {
             <span className="material-symbols-outlined text-primary">admin_panel_settings</span>
             HR Ops Portal
           </h1>
-          <p className="text-text-muted dark:text-slate-400">Please sign in to continue</p>
+          <p className="text-text-muted dark:text-slate-400">
+            {isLoginMode ? 'Please sign in to continue' : 'Create a new account'}
+          </p>
         </div>
 
-        <form onSubmit={handleLogin} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-6">
           {error && (
             <div className="p-3 bg-red-100 text-red-700 rounded border border-red-200 text-sm dark:bg-red-900/30 dark:text-red-400 dark:border-red-800">
               {error}
+            </div>
+          )}
+
+          {successMsg && (
+            <div className="p-3 bg-green-100 text-green-700 rounded border border-green-200 text-sm dark:bg-green-900/30 dark:text-green-400 dark:border-green-800">
+              {successMsg}
             </div>
           )}
 
@@ -88,11 +125,20 @@ const Login: React.FC = () => {
             {loading ? (
               <span className="material-symbols-outlined animate-spin text-lg">progress_activity</span>
             ) : (
-              <span className="material-symbols-outlined text-lg">login</span>
+              <span className="material-symbols-outlined text-lg">{isLoginMode ? 'login' : 'person_add'}</span>
             )}
-            Sign In
+            {isLoginMode ? 'Sign In' : 'Sign Up'}
           </button>
         </form>
+
+        <div className="mt-6 text-center">
+          <button
+            onClick={toggleMode}
+            className="text-primary hover:text-primary/80 text-sm font-medium transition-colors"
+          >
+            {isLoginMode ? "Don't have an account? Sign up" : 'Already have an account? Sign in'}
+          </button>
+        </div>
       </div>
     </div>
   );
