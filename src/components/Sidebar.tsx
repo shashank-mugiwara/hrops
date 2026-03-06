@@ -1,5 +1,5 @@
 import React from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
@@ -13,6 +13,13 @@ const navItems = [
 ];
 
 export const Sidebar: React.FC = () => {
+  const navigate = useNavigate();
+
+  const handleSignOut = () => {
+    localStorage.removeItem('isAuthenticated');
+    navigate('/login');
+  };
+
   return (
     <aside className="w-64 flex-shrink-0 bg-[#f8f8fc] border-r border-border-subtle flex flex-col justify-between h-screen z-20 dark:bg-background-dark dark:border-slate-800">
       <div className="flex flex-col">
@@ -52,20 +59,29 @@ export const Sidebar: React.FC = () => {
         <NavLink
           to="/settings"
           className={({ isActive }) => twMerge(
-            "flex items-center gap-3 px-3 py-2 rounded text-text-secondary hover:text-text-main transition-colors",
+            "flex items-center gap-3 px-3 py-2 rounded text-text-secondary hover:text-text-main transition-colors mb-2",
             isActive && "text-primary bg-white shadow-sm border border-border-subtle dark:bg-slate-800 dark:border-slate-700"
           )}
         >
           <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>settings</span>
           <span className="text-sm font-medium">Settings</span>
         </NavLink>
-        <div className="mt-3 flex items-center gap-3 px-3 py-2">
-          <div className="w-8 h-8 rounded-full bg-slate-200 bg-cover bg-center border border-border-subtle"
-            style={{ backgroundImage: `url('https://lh3.googleusercontent.com/aida-public/AB6AXuCbj71q8jIqBO1HLdUugtprVjdSFGB98r_Aen_lyhPQjaDlCwFPdPeoaclu1Dnb0frAzwYRddMnvEk6t59Ci5FC-M1kJ8mIubUH2DEK-I_GhoeBcvlHSDjF49Z2OPIM_NjnsSY-QiZ_lANkF71Wi1Xq2UCzxNayQCdoUBbhtOdpMFfUof2_EhfjIRJQbdFZgxxyMUFTloWDgqqm6uQ3_kmSkgF72C9RVjllC7hj3iCAavLRahq_9mxMx6G1C-pz7N0_o1Qq498FKdb7')` }}>
+
+        <button
+          onClick={handleSignOut}
+          className="w-full flex items-center gap-3 px-3 py-2 rounded text-text-secondary hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors"
+        >
+          <span className="material-symbols-outlined" style={{ fontSize: '20px' }}>logout</span>
+          <span className="text-sm font-medium">Sign Out</span>
+        </button>
+
+        <div className="mt-3 flex items-center gap-3 px-3 py-2 border-t border-border-subtle dark:border-slate-700 pt-3">
+          <div className="w-8 h-8 rounded-full bg-brand-primary flex items-center justify-center text-white font-bold text-sm shadow-sm border border-white dark:border-slate-600">
+            S
           </div>
           <div className="flex flex-col">
-            <span className="text-xs font-semibold text-text-main dark:text-white">Elena R.</span>
-            <span className="text-[10px] text-text-secondary uppercase tracking-wider">HR Ops Lead</span>
+            <span className="text-xs font-semibold text-text-main dark:text-white">Sheerin Taj</span>
+            <span className="text-[10px] text-text-secondary uppercase tracking-wider">Administrator</span>
           </div>
         </div>
       </div>

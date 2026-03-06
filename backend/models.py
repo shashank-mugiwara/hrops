@@ -105,3 +105,8 @@ class AppSettings(Base):
     slack_socket_mode = Column(Boolean, nullable=False, default=False)
     slack_app_token = Column(String, nullable=True)
     slack_channel_id = Column(String, nullable=True)
+class AdminUser(Base):
+    __tablename__ = "admin_users"
+    id = Column(Integer, primary_key=True, index=True)
+    username = Column(String, unique=True, index=True, nullable=False)
+    password_hash = Column(String, nullable=False)

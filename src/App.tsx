@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Dashboard from './pages/Dashboard';
 import CandidateRepository from './pages/CandidateRepository';
 import ImportWizard from './pages/ImportWizard';
@@ -10,6 +10,8 @@ import GroupsDepartments from './pages/GroupsDepartments';
 import HelpGuide from './pages/HelpGuide';
 import Reports from './pages/Reports';
 import Settings from './pages/Settings';
+import Login from './pages/Login';
+import ProtectedRoute from './components/ProtectedRoute';
 
 const App: React.FC = () => {
   const [darkMode, setDarkMode] = useState(false);
@@ -36,16 +38,23 @@ const App: React.FC = () => {
       </button>
 
       <Routes>
-        <Route path="/" element={<Dashboard />} />
-        <Route path="/repository" element={<CandidateRepository />} />
-        <Route path="/import" element={<ImportWizard />} />
-        <Route path="/rules" element={<AutomationRules />} />
-        <Route path="/templates" element={<Templates />} />
-        <Route path="/groups" element={<GroupsDepartments />} />
-        <Route path="/candidate/:id" element={<CandidateDetail />} />
-        <Route path="/help" element={<HelpGuide />} />
-        <Route path="/reports" element={<Reports />} />
-        <Route path="/settings" element={<Settings />} />
+        <Route path="/login" element={<Login />} />
+
+        <Route element={<ProtectedRoute />}>
+          <Route path="/" element={<Dashboard />} />
+          <Route path="/repository" element={<CandidateRepository />} />
+          <Route path="/import" element={<ImportWizard />} />
+          <Route path="/rules" element={<AutomationRules />} />
+          <Route path="/templates" element={<Templates />} />
+          <Route path="/groups" element={<GroupsDepartments />} />
+          <Route path="/candidate/:id" element={<CandidateDetail />} />
+          <Route path="/help" element={<HelpGuide />} />
+          <Route path="/reports" element={<Reports />} />
+          <Route path="/settings" element={<Settings />} />
+        </Route>
+
+        {/* Catch-all redirect */}
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </BrowserRouter>
   );
