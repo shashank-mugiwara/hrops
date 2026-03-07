@@ -9,6 +9,7 @@ const sidebars: SidebarsConfig = {
       items: [
         'technical/overview',
         'technical/components',
+        'technical/database',
       ],
       collapsed: false,
     },
