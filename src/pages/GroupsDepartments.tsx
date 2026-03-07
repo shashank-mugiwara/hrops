@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { MainLayout } from '../layouts/MainLayout';
 import CreateGroupModal from '../components/CreateGroupModal';
 import { api, type Group, type Department } from '../api';
@@ -20,6 +20,21 @@ const GroupsDepartments: React.FC = () => {
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [stats, setStats] = useState({ totalEmployees: 0, activeRules: 0, pendingRequests: 0 });
+
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [filterDepartmentId, setFilterDepartmentId] = useState<string>('');
+  const filterRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (filterRef.current && !filterRef.current.contains(event.target as Node)) {
+        setIsFilterOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -47,6 +62,15 @@ const GroupsDepartments: React.FC = () => {
     fetchData();
   }, []);
 
+  const filteredGroups = groups.filter(g => {
+    const matchesSearch = (g.name || '').toLowerCase().includes(searchQuery.toLowerCase()) ||
+                          (g.code || '').toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesDept = !filterDepartmentId || g.department_id?.toString() === filterDepartmentId;
+    return matchesSearch && matchesDept;
+  });
+
+  const activeFilterCount = filterDepartmentId ? 1 : 0;
+
   return (
     <MainLayout
       title="Groups & Departments"
@@ -73,12 +97,52 @@ const GroupsDepartments: React.FC = () => {
                 className="w-full pl-10 pr-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg focus:ring-1 focus:ring-primary focus:border-primary text-sm transition-all outline-none dark:text-white"
                 placeholder="Search groups or rules..."
                 type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
-            <button className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors">
-              <span className="material-symbols-outlined text-lg">filter_list</span>
-              Filter
-            </button>
+            <div className="relative" ref={filterRef}>
+              <button
+                onClick={() => setIsFilterOpen(!isFilterOpen)}
+                className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg text-sm font-medium hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+              >
+                <span className="material-symbols-outlined text-lg">filter_list</span>
+                Filter
+                {activeFilterCount > 0 && <span className="ml-1 bg-primary text-white py-0.5 px-1.5 rounded text-xs">{activeFilterCount}</span>}
+              </button>
+
+              {isFilterOpen && (
+                <div className="absolute top-full right-0 mt-2 w-72 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-lg shadow-xl z-50 p-4">
+                  <div className="flex justify-between items-center mb-4 border-b border-slate-100 dark:border-slate-800 pb-2">
+                    <h3 className="text-sm font-semibold text-text-main dark:text-white">Filter Groups</h3>
+                    <button onClick={() => setFilterDepartmentId('')} className="text-xs text-primary hover:underline">Clear all</button>
+                  </div>
+
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-xs font-medium text-text-secondary mb-1">Department</label>
+                      <select
+                        value={filterDepartmentId}
+                        onChange={e => setFilterDepartmentId(e.target.value)}
+                        className="w-full text-sm border border-slate-300 dark:border-slate-700 rounded p-2 bg-white dark:bg-slate-800 text-text-main dark:text-white"
+                      >
+                        <option value="">All Departments</option>
+                        {departments.map(dept => (
+                          <option key={dept.id} value={dept.id.toString()}>{dept.name}</option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <button
+                      onClick={() => setIsFilterOpen(false)}
+                      className="w-full mt-2 bg-primary text-white rounded py-2 text-sm font-medium hover:bg-primary-hover transition-colors"
+                    >
+                      Apply Filters
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
@@ -92,8 +156,8 @@ const GroupsDepartments: React.FC = () => {
                     <input
                       type="checkbox"
                       className="custom-checkbox h-4 w-4"
-                      checked={selectedIds.length === groups.length && groups.length > 0}
-                      onChange={() => setSelectedIds(prev => prev.length === groups.length ? [] : groups.map(g => g.id))}
+                      checked={selectedIds.length === filteredGroups.length && filteredGroups.length > 0}
+                      onChange={() => setSelectedIds(prev => prev.length === filteredGroups.length ? [] : filteredGroups.map(g => g.id))}
                     />
                   </th>
                   <th className="px-6 py-4 border-b border-slate-200 dark:border-slate-800">Group Name</th>
@@ -116,8 +180,12 @@ const GroupsDepartments: React.FC = () => {
                   <tr>
                     <td colSpan={6} className="text-center py-8">No groups found.</td>
                   </tr>
+                ) : filteredGroups.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} className="text-center py-8">No groups found matching filter.</td>
+                  </tr>
                 ) : (
-                  groups.map((group) => (
+                  filteredGroups.map((group) => (
                     <tr key={group.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors group">
                       <td className="px-6 py-5">
                         <input
@@ -159,7 +227,7 @@ const GroupsDepartments: React.FC = () => {
           </div>
           {/* Pagination Footer */}
           <div className="px-6 py-4 bg-slate-50 dark:bg-slate-800/30 border-t border-slate-200 dark:border-slate-800 flex items-center justify-between">
-            <p className="text-xs text-slate-500">Showing {groups.length} groups</p>
+            <p className="text-xs text-slate-500">Showing {filteredGroups.length} groups</p>
           </div>
         </div>
 
